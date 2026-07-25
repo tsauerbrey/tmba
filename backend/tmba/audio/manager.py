@@ -7,6 +7,7 @@ from threading import RLock
 from time import monotonic
 from typing import Any, Protocol
 
+from tmba.audio.pipeline import AudioPipeline
 from tmba.core.event_bus import event_bus
 from tmba.core.source_manager import source_manager
 
@@ -36,6 +37,19 @@ class AudioSourceService(Protocol):
         ...
 
 
+class AudioPipelineService(Protocol):
+    """Lifecycle contract used by AudioManager."""
+
+    def start(self) -> None:
+        ...
+
+    def stop(self) -> None:
+        ...
+
+    def status(self) -> Any:
+        ...
+
+
 @dataclass
 class AudioManagerState:
     """Current state of the central TMBA audio pipeline."""
@@ -53,9 +67,9 @@ class AudioManager:
     """
     Coordinates all audio sources through one central state machine.
 
-    Stage A does not yet open an ALSA or CamillaDSP device. It establishes
-    the source arbitration, transport routing and stable status interface
-    needed by the later hardware and DSP stages.
+    TMBA v0.6.1-B connects the source coordinator to the logical
+    AudioPipeline. The pipeline still uses NullOutputDriver by default and
+    therefore does not open ALSA or CamillaDSP devices.
     """
 
     VALID_STATES = {
@@ -73,15 +87,26 @@ class AudioManager:
         "airplay",
     }
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        *,
+        pipeline: AudioPipelineService | None = None,
+    ) -> None:
         self._lock = RLock()
         self._state = AudioManagerState()
         self._services: dict[str, AudioSourceService] = {}
+        self._pipeline = pipeline or AudioPipeline()
 
         event_bus.subscribe(
             "source.availability_changed",
             self._handle_source_availability_changed,
         )
+
+    @property
+    def pipeline(self) -> AudioPipelineService:
+        """Return the pipeline instance managed by this AudioManager."""
+
+        return self._pipeline
 
     def register_source(
         self,
@@ -139,6 +164,23 @@ class AudioManager:
 
         return snapshot
 
+    def get_pipeline_status(self) -> dict[str, Any]:
+        """
+        Return the current logical pipeline state.
+
+        The dedicated REST endpoint is intentionally added only in v0.6.1-C.
+        """
+
+        status = self._pipeline.status()
+
+        if hasattr(status, "__dataclass_fields__"):
+            return asdict(status)
+
+        if isinstance(status, dict):
+            return dict(status)
+
+        raise TypeError("Die AudioPipeline liefert keinen unterstützten Status.")
+
     def select_source(
         self,
         source: str,
@@ -149,7 +191,7 @@ class AudioManager:
         Activate one source exclusively.
 
         The previously active source is stopped before the new source is
-        selected. Selecting ``none`` only stops the current source.
+        selected. Selecting ``none`` stops the current source and pipeline.
         """
 
         target = self._normalize_source(source)
@@ -183,7 +225,25 @@ class AudioManager:
                     previous_source=previous,
                 )
 
+            pipeline_stop_error = self._try_stop_pipeline()
+            if pipeline_stop_error is not None:
+                return self._fail_transition(
+                    "Die AudioPipeline konnte beim Quellenwechsel "
+                    "nicht gestoppt werden.",
+                    details={"error": pipeline_stop_error},
+                    previous_source=previous,
+                )
+
         if target == "none":
+            if previous == "none":
+                pipeline_stop_error = self._try_stop_pipeline()
+                if pipeline_stop_error is not None:
+                    return self._fail_transition(
+                        "Die AudioPipeline konnte nicht gestoppt werden.",
+                        details={"error": pipeline_stop_error},
+                        previous_source=previous,
+                    )
+
             source_manager.select_source("none")
             self._set_state(
                 source="none",
@@ -225,7 +285,11 @@ class AudioManager:
         )
 
     def play(self) -> dict[str, Any]:
-        return self._run_transport("play", success_state="playing")
+        return self._run_transport(
+            "play",
+            success_state="playing",
+            start_pipeline=True,
+        )
 
     def pause(self) -> dict[str, Any]:
         return self._run_transport("pause", success_state="paused")
@@ -235,6 +299,14 @@ class AudioManager:
             source = self._state.source
 
         if source == "none":
+            pipeline_stop_error = self._try_stop_pipeline()
+            if pipeline_stop_error is not None:
+                return self._set_error(
+                    f"AudioPipeline konnte nicht gestoppt werden: "
+                    f"{pipeline_stop_error}",
+                    command="stop",
+                )
+
             self._set_state(state="stopped", error=None)
             return self._result(
                 success=True,
@@ -243,16 +315,25 @@ class AudioManager:
 
         result = self._stop_source(source)
 
-        if result.get("success", False):
-            self._set_state(state="stopped", error=None)
-            self._publish_state_changed("stopped")
-            return self._result(
-                success=True,
+        if not result.get("success", False):
+            return self._set_error_from_result("stop", result)
+
+        pipeline_stop_error = self._try_stop_pipeline()
+        if pipeline_stop_error is not None:
+            return self._set_error(
+                f"AudioPipeline konnte nicht gestoppt werden: "
+                f"{pipeline_stop_error}",
                 command="stop",
                 service_result=result,
             )
 
-        return self._set_error_from_result("stop", result)
+        self._set_state(state="stopped", error=None)
+        self._publish_state_changed("stopped")
+        return self._result(
+            success=True,
+            command="stop",
+            service_result=result,
+        )
 
     def previous(self) -> dict[str, Any]:
         return self._run_transport(
@@ -369,6 +450,7 @@ class AudioManager:
         command: str,
         *,
         success_state: str | None,
+        start_pipeline: bool = False,
     ) -> dict[str, Any]:
         with self._lock:
             source = self._state.source
@@ -404,6 +486,18 @@ class AudioManager:
         if not result.get("success", False):
             return self._set_error_from_result(command, result)
 
+        if start_pipeline:
+            try:
+                self._pipeline.start()
+            except Exception as error:
+                rollback_result = self._stop_source(source)
+                return self._set_error(
+                    f"AudioPipeline konnte nicht gestartet werden: {error}",
+                    command=command,
+                    service_result=result,
+                    rollback_result=rollback_result,
+                )
+
         if success_state is not None:
             self._set_state(state=success_state, error=None)
             self._publish_state_changed(success_state)
@@ -435,6 +529,14 @@ class AudioManager:
             }
 
         return result
+
+    def _try_stop_pipeline(self) -> str | None:
+        try:
+            self._pipeline.stop()
+        except Exception as error:
+            return str(error)
+
+        return None
 
     def _get_service(
         self,

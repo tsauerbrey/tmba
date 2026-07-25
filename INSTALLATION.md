@@ -1,9 +1,6 @@
-# Installation TMBA v0.6.1-A
+# Installation TMBA v0.6.1-B
 
-Dieses Paket fügt die neue AudioPipeline parallel zum bestehenden AudioManager
-hinzu. Bestehende Python-Quelldateien werden nicht ersetzt.
-
-## 1. Projekt sichern und aktualisieren
+## 1. Aktuellen Stand prüfen
 
 ```bash
 cd ~/Development/tmba
@@ -11,71 +8,61 @@ git status
 git pull
 ```
 
-Der Arbeitsbaum sollte sauber sein.
+Der Arbeitsbaum sollte sauber sein und v0.6.1-A enthalten.
 
 ## 2. Paket entpacken
 
 ```bash
 cd ~/Downloads
-unzip -o TMBA-0.6.1-A-AudioPipeline.zip \
-  -d TMBA-0.6.1-A-AudioPipeline
+unzip -o TMBA-0.6.1-B-AudioManager-Integration.zip \
+  -d TMBA-0.6.1-B-AudioManager-Integration
 ```
 
 ## 3. Dateien kopieren
 
 ```bash
-cd ~/Downloads/TMBA-0.6.1-A-AudioPipeline
+cd ~/Downloads/TMBA-0.6.1-B-AudioManager-Integration
 cp -R . ~/Development/tmba/
 ```
+
+Dabei wird diese bestehende Datei vollständig ersetzt:
+
+```text
+backend/tmba/audio/manager.py
+```
+
+Die übrigen Dateien werden neu hinzugefügt.
 
 ## 4. Prüfskript ausführbar machen
 
 ```bash
-chmod +x ~/Development/tmba/scripts/check-audio-pipeline.sh
+chmod +x \
+  ~/Development/tmba/scripts/check-audio-manager-pipeline.sh
 ```
 
 ## 5. Änderungen prüfen
 
 ```bash
 cd ~/Development/tmba
+git diff -- backend/tmba/audio/manager.py
 git status
 ```
-
-Erwartet werden neue Pipeline-, Test- und Dokumentationsdateien.
 
 ## 6. Tests ausführen
 
 ```bash
-./scripts/check-audio-pipeline.sh
+./scripts/check-audio-manager-pipeline.sh
 ```
 
-Erwartetes Gesamtergebnis:
-
-```text
-28 passed
-```
-
-Die genaue Zahl kann höher sein, falls zwischenzeitlich weitere Tests
-hinzugefügt wurden.
+Die genaue Testzahl kann durch weitere Tests im Repository variieren.
+Entscheidend ist, dass alle drei Prüfschritte erfolgreich beendet werden.
 
 ## 7. Commit und Push
 
 ```bash
 git add .
-git commit -m "Add AudioPipeline architecture"
+git commit -m "Integrate AudioPipeline with AudioManager"
 git push
 ```
 
-Danach GitHub Actions kontrollieren. Beide Workflows müssen grün sein.
-
-## 8. Optionaler Arbeitstag
-
-Für Teilmeilensteine verwenden wir zunächst Commits und keinen offiziellen
-SemVer-Tag. Ein offizieller Tag `v0.6.1` wird nach Abschluss von A bis D gesetzt.
-
-Wer dennoch einen temporären Entwicklungs-Tag verwenden möchte:
-
-```bash
-git tag -a v0.6.1-a -m "TMBA v0.6.1-A AudioPipeline architecture"
-git push origin v0.6.1-a
-```
+Danach müssen Backend-Tests und Frontend-Build in GitHub Actions grün sein.
