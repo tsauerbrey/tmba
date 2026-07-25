@@ -1,81 +1,81 @@
-# Installation des Project Foundation Packs
+# Installation TMBA v0.6.1-A
 
-## 1. Sicherung des aktuellen Standes
+Dieses Paket fügt die neue AudioPipeline parallel zum bestehenden AudioManager
+hinzu. Bestehende Python-Quelldateien werden nicht ersetzt.
 
-Im Projektordner:
+## 1. Projekt sichern und aktualisieren
 
 ```bash
 cd ~/Development/tmba
 git status
+git pull
 ```
 
-## 2. Paket kopieren
+Der Arbeitsbaum sollte sauber sein.
 
-Der Inhalt dieses Pakets wird in den Projektordner kopiert:
+## 2. Paket entpacken
 
 ```bash
+cd ~/Downloads
+unzip -o TMBA-0.6.1-A-AudioPipeline.zip \
+  -d TMBA-0.6.1-A-AudioPipeline
+```
+
+## 3. Dateien kopieren
+
+```bash
+cd ~/Downloads/TMBA-0.6.1-A-AudioPipeline
 cp -R . ~/Development/tmba/
 ```
 
-Bestehende gleichnamige Dokumentationsdateien werden dabei ersetzt.
-
-## 3. Prüfskript ausführbar machen
+## 4. Prüfskript ausführbar machen
 
 ```bash
-chmod +x ~/Development/tmba/scripts/check-release.sh
+chmod +x ~/Development/tmba/scripts/check-audio-pipeline.sh
 ```
 
-## 4. Änderungen kontrollieren
+## 5. Änderungen prüfen
 
 ```bash
 cd ~/Development/tmba
 git status
-git diff
 ```
 
-## 5. Tests ausführen
+Erwartet werden neue Pipeline-, Test- und Dokumentationsdateien.
+
+## 6. Tests ausführen
 
 ```bash
-./scripts/check-release.sh
+./scripts/check-audio-pipeline.sh
 ```
 
-## 6. Commit erstellen
+Erwartetes Gesamtergebnis:
+
+```text
+28 passed
+```
+
+Die genaue Zahl kann höher sein, falls zwischenzeitlich weitere Tests
+hinzugefügt wurden.
+
+## 7. Commit und Push
 
 ```bash
 git add .
-git commit -m "Prepare TMBA v0.6.0 project foundation"
-```
-
-## 7. Hauptbranch zu GitHub übertragen
-
-Zunächst den aktuellen Branchnamen prüfen:
-
-```bash
-git branch --show-current
-```
-
-Danach:
-
-```bash
+git commit -m "Add AudioPipeline architecture"
 git push
 ```
 
-Falls der Branch noch keinen Upstream besitzt:
+Danach GitHub Actions kontrollieren. Beide Workflows müssen grün sein.
+
+## 8. Optionaler Arbeitstag
+
+Für Teilmeilensteine verwenden wir zunächst Commits und keinen offiziellen
+SemVer-Tag. Ein offizieller Tag `v0.6.1` wird nach Abschluss von A bis D gesetzt.
+
+Wer dennoch einen temporären Entwicklungs-Tag verwenden möchte:
 
 ```bash
-git push -u origin main
+git tag -a v0.6.1-a -m "TMBA v0.6.1-A AudioPipeline architecture"
+git push origin v0.6.1-a
 ```
-
-## 8. Tag erstellen
-
-```bash
-git tag -a v0.6.0 -m "TMBA-OS v0.6.0"
-git push origin v0.6.0
-```
-
-## Hinweis zur Lizenz
-
-Im Paket ist bewusst noch keine Open-Source-Lizenz enthalten. Die Entscheidung
-zwischen MIT, GPL oder einer anderen Lizenz sollte bewusst getroffen werden,
-bevor das Projekt öffentlich veröffentlicht oder von anderen weiterverwendet
-wird.
