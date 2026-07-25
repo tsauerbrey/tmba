@@ -6,3 +6,4 @@ pytest
 httpx
 PyYAML
 psutil
+python-mpd2
