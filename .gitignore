@@ -1,0 +1,29 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.venv/
+venv/
+
+# VS Code
+.vscode/
+
+# Qt
+*.qmlc
+*.jsc
+
+# Logs
+*.log
+
+# Build
+build/
+dist/
+
+# Images
+*.img
+*.iso

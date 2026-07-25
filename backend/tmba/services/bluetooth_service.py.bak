@@ -1,0 +1,16 @@
+from tmba.services.base_source_service import BaseSourceService
+
+
+class BluetoothService(BaseSourceService):
+    """Verarbeitet Bluetooth-Audiozustände und Metadaten."""
+
+    def __init__(self) -> None:
+        super().__init__(
+            source_name="bluetooth",
+            default_title="Bluetooth",
+            default_artist="Gerät verbinden",
+            default_album="TMBA-OS",
+        )
+
+
+bluetooth_service = BluetoothService()
