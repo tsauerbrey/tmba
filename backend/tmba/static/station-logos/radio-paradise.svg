@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#24364b"/>
+      <stop offset="100%" stop-color="#090d12"/>
+    </linearGradient>
+
+    <radialGradient id="glow" cx="50%" cy="42%" r="65%">
+      <stop offset="0%" stop-color="#ff9a3c" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#ff9a3c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="800" rx="96" fill="url(#background)"/>
+  <rect width="800" height="800" rx="96" fill="url(#glow)"/>
+
+  <circle
+    cx="400"
+    cy="355"
+    r="220"
+    fill="none"
+    stroke="#ff9a3c"
+    stroke-width="18"
+    opacity="0.8"
+  />
+
+  <text
+    x="400"
+    y="430"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="250"
+    font-weight="700"
+    fill="#ffffff"
+  >
+    RP
+  </text>
+
+  <text
+    x="400"
+    y="665"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="54"
+    font-weight="600"
+    letter-spacing="8"
+    fill="#ffb56f"
+  >
+    RADIO PARADISE
+  </text>
+</svg>

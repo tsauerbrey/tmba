@@ -23,6 +23,7 @@ class MPDService:
 
         self._client: MPDClient | None = None
         self._lock = Lock()
+        self._current_station_name = ""
 
     def _create_client(self) -> MPDClient:
         client = MPDClient()
@@ -128,6 +129,7 @@ class MPDService:
             "artist": song.get("artist", ""),
             "album": song.get("album", ""),
             "file": song.get("file", ""),
+            "station_name": self._current_station_name,
             "cover_url": "",
             "duration": self._to_float(
                 status.get("duration", song.get("duration")),
@@ -177,6 +179,8 @@ class MPDService:
                 client.play()
 
                 status = client.status()
+                self._current_station_name = normalized_station_name
+
             except (
                 CommandError,
                 MPDConnectionError,
@@ -305,6 +309,7 @@ class MPDService:
             "artist": "",
             "album": "",
             "file": "",
+            "station_name": "",
             "cover_url": "",
             "duration": 0,
             "elapsed": 0,

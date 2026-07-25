@@ -1,0 +1,20 @@
+project:
+  name: TMBA
+  full_name: Thoralfs Mobile Beschallungs-Anlage
+  version: 0.1.0
+  environment: development
+
+device:
+  hostname: tmba
+  language: de
+  timezone: Europe/Berlin
+
+startup:
+  restore_last_source: true
+  restore_volume: true
+  safe_startup_volume: 25
+
+paths:
+  data_directory: backend/data
+  static_directory: backend/tmba/static
+  log_directory: var/log

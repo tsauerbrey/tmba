@@ -1,0 +1,19 @@
+display:
+  width: 800
+  height: 480
+  rotation: 0
+  touchscreen: true
+
+theme:
+  mode: dark
+  accent: tmba
+
+kiosk:
+  enabled: true
+  hide_cursor: true
+  fullscreen: true
+
+keyboard:
+  enabled: true
+  provider: wvkbd
+  show_automatically: true

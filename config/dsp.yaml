@@ -1,0 +1,20 @@
+enabled: true
+engine: camilladsp
+active_preset: neutral
+
+processing:
+  sample_rate: 48000
+  channels: 2
+  limiter_enabled: true
+  loudness_enabled: false
+  preamp_db: -3.0
+
+filters:
+  highpass_enabled: true
+  highpass_frequency_hz: 35
+  lowpass_enabled: false
+  lowpass_frequency_hz: 20000
+
+paths:
+  presets_directory: config/dsp/presets
+  generated_config: var/lib/tmba/camilladsp.yaml

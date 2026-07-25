@@ -1,8 +1,10 @@
 <script setup>
+import { computed } from 'vue'
+
 import AlbumCover from './AlbumCover.vue'
 import SourceButton from './SourceButton.vue'
 
-defineProps({
+const props = defineProps({
   source: {
     type: String,
     default: 'none',
@@ -19,10 +21,60 @@ defineProps({
   },
 })
 
-const emit = defineEmits(['select-source'])
+const emit = defineEmits([
+  'select-source',
+  'activate-cover',
+])
+
+const coverAction = computed(() => {
+  switch (props.source) {
+    case 'webradio':
+      return {
+        interactive: true,
+        label: 'Sender',
+        icon: '☰',
+      }
+
+    case 'airplay':
+      return {
+        interactive: true,
+        label: 'Details',
+        icon: 'ℹ',
+      }
+
+    case 'bluetooth':
+      return {
+        interactive: true,
+        label: 'Geräte',
+        icon: '∞',
+      }
+
+    case 'usb':
+      return {
+        interactive: true,
+        label: 'Bibliothek',
+        icon: '▣',
+      }
+
+    default:
+      return {
+        interactive: false,
+        label: '',
+        icon: '',
+      }
+  }
+})
 
 function selectSource(sourceName) {
   emit('select-source', sourceName)
+}
+
+function activateCover() {
+  if (!coverAction.value.interactive) {
+    return
+  }
+
+  emit('activate-cover', props.source)
 }
 </script>
 
@@ -50,6 +102,10 @@ function selectSource(sourceName) {
       <AlbumCover
         :cover-url="coverUrl"
         :title="title"
+        :interactive="coverAction.interactive"
+        :action-label="coverAction.label"
+        :action-icon="coverAction.icon"
+        @activate="activateCover"
       />
     </section>
 
@@ -90,9 +146,9 @@ function selectSource(sourceName) {
 
 .now-playing {
   display: flex;
+  min-width: 0;
   align-items: center;
   justify-content: center;
-  min-width: 0;
 }
 
 @media (max-width: 700px) {

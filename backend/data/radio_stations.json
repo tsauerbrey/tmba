@@ -1,0 +1,114 @@
+{
+  "stations": [
+    {
+      "id": "radio-browser-0de82079-04e7-407b-b616-e0726eba5244",
+      "name": "Bayern 3",
+      "url": "https://dispatcher.rndfnk.com/br/br3/live/mp3/mid",
+      "favorite": true,
+      "logo_url": "https://api.ardmediathek.de/image-service/images/urn:ard:image:52fd25fc45de7c6a?w=512",
+      "provider": "radio-browser",
+      "external_id": "0de82079-04e7-407b-b616-e0726eba5244",
+      "homepage": "https://www.bayern3.de/",
+      "country": "Germany",
+      "country_code": "DE",
+      "state": "Bayern",
+      "languages": [
+        "german"
+      ],
+      "tags": [
+        "pop"
+      ],
+      "codec": "MP3",
+      "bitrate": 128,
+      "last_played_at": "2026-07-25T18:29:34Z"
+    },
+    {
+      "id": "radio-browser-5f20d10f-732b-11e8-83fa-52543be04c81",
+      "name": "egoFM",
+      "url": "http://cast.egofm.de/egofm.mp3?ar-distributor=ffa0&aw_0_req.gdpr=true",
+      "favorite": true,
+      "logo_url": "",
+      "provider": "radio-browser",
+      "external_id": "5f20d10f-732b-11e8-83fa-52543be04c81",
+      "homepage": "https://www.egofm.de/",
+      "country": "Germany",
+      "country_code": "DE",
+      "state": "Bavaria",
+      "languages": [
+        "german"
+      ],
+      "tags": [
+        "indie"
+      ],
+      "codec": "MP3",
+      "bitrate": 128,
+      "last_played_at": "2026-07-25T18:35:09Z"
+    },
+    {
+      "id": "radio-browser-96352604-0601-11e8-ae97-52543be04c81",
+      "name": "Radio Paloma",
+      "url": "http://icepool.silvacast.com/RADIOPALOMA.mp3",
+      "favorite": false,
+      "logo_url": "https://schlager.radio/wp-content/uploads/2020/11/cropped-radio-paloma-fav-180x180.png",
+      "provider": "radio-browser",
+      "external_id": "96352604-0601-11e8-ae97-52543be04c81",
+      "homepage": "http://www.radiopaloma.de/",
+      "country": "Germany",
+      "country_code": "DE",
+      "state": "Berlin",
+      "languages": [
+        "german"
+      ],
+      "tags": [
+        "schlager"
+      ],
+      "codec": "MP3",
+      "bitrate": 128
+    },
+    {
+      "id": "radio-browser-9606a015-0601-11e8-ae97-52543be04c81",
+      "name": "WDR 1Live Diggi",
+      "url": "http://wdr-1live-diggi.icecast.wdr.de/wdr/1live/diggi/mp3/128/stream.mp3",
+      "favorite": false,
+      "logo_url": "https://www1.wdr.de/radio/1live-diggi/resources-v5.122.3/img/favicon/apple-touch-icon.png",
+      "provider": "radio-browser",
+      "external_id": "9606a015-0601-11e8-ae97-52543be04c81",
+      "homepage": "https://www1.wdr.de/radio/1live-diggi/",
+      "country": "Germany",
+      "country_code": "DE",
+      "state": "North Rhine-Westphalia",
+      "languages": [
+        "german"
+      ],
+      "tags": [
+        "pop"
+      ],
+      "codec": "MP3",
+      "bitrate": 128,
+      "last_played_at": "2026-07-25T18:31:12Z"
+    },
+    {
+      "id": "radio-browser-c0cb1e13-0eed-405d-ac34-fffbd8bb835b",
+      "name": "NDR 90,3",
+      "url": "https://icecast.ndr.de/ndr/ndr903/hamburg/mp3/128/stream.mp3?1728425642817&aggregator=web",
+      "favorite": false,
+      "logo_url": "https://www.phonostar.de/images/auto_created/NDR_903_3184x184.png",
+      "provider": "radio-browser",
+      "external_id": "c0cb1e13-0eed-405d-ac34-fffbd8bb835b",
+      "homepage": "https://www.ndr.de/903",
+      "country": "Germany",
+      "country_code": "DE",
+      "state": "Hamburg",
+      "languages": [
+        "german"
+      ],
+      "tags": [
+        "music",
+        "pop",
+        "rock"
+      ],
+      "codec": "MP3",
+      "bitrate": 128
+    }
+  ]
+}

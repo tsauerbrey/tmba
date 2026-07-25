@@ -1,0 +1,15 @@
+wifi:
+  enabled: true
+  autoconnect: true
+  scan_interval_seconds: 15
+  connection_timeout_seconds: 30
+
+webui:
+  enabled: true
+  host: 0.0.0.0
+  port: 8080
+  local_hostname: tmba.local
+
+security:
+  local_network_only: true
+  pin_enabled: false

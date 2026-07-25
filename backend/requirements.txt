@@ -3,4 +3,6 @@ uvicorn[standard]
 python-multipart
 pydantic
 pytest
-httpx2
+httpx
+PyYAML
+psutil

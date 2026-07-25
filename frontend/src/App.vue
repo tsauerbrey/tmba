@@ -1,14 +1,21 @@
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
+import {
+  onMounted,
+  onUnmounted,
+  ref,
+} from 'vue'
 import { storeToRefs } from 'pinia'
 
 import MainScreen from './components/MainScreen.vue'
-import StatusBar from './components/StatusBar.vue'
-import VolumeBar from './components/VolumeBar.vue'
-import TrackInfo from './components/TrackInfo.vue'
 import PlayerControls from './components/PlayerControls.vue'
-import { usePlayerStore } from './stores/player'
+import SourceDetails from './components/SourceDetails.vue'
+import StatusBar from './components/StatusBar.vue'
+import TrackInfo from './components/TrackInfo.vue'
+import VolumeBar from './components/VolumeBar.vue'
+import WebradioBrowser from './components/WebradioBrowser.vue'
+import WifiSettings from './components/WifiSettings.vue'
 
+import { usePlayerStore } from './stores/player'
 
 const playerStore = usePlayerStore()
 
@@ -37,10 +44,49 @@ const {
   next,
 } = playerStore
 
+const webRadioBrowserOpen = ref(false)
+const sourceDetailsOpen = ref(false)
+const wifiSettingsOpen = ref(false)
 
 let refreshTimer = null
 
+function closeOverlays() {
+  webRadioBrowserOpen.value = false
+  sourceDetailsOpen.value = false
+  wifiSettingsOpen.value = false
+}
+
+function handleCoverAction(selectedSource) {
+  closeOverlays()
+
+  if (selectedSource === 'webradio') {
+    webRadioBrowserOpen.value = true
+    return
+  }
+
+  if (
+    selectedSource === 'airplay'
+    || selectedSource === 'bluetooth'
+    || selectedSource === 'usb'
+  ) {
+    sourceDetailsOpen.value = true
+  }
+}
+
+function openWifiSettings() {
+  closeOverlays()
+  wifiSettingsOpen.value = true
+}
+
+function handleKeydown(event) {
+  if (event.key === 'Escape') {
+    closeOverlays()
+  }
+}
+
 onMounted(async () => {
+  window.addEventListener('keydown', handleKeydown)
+
   await loadStatus()
 
   refreshTimer = window.setInterval(() => {
@@ -51,8 +97,11 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown)
+
   if (refreshTimer !== null) {
     window.clearInterval(refreshTimer)
+    refreshTimer = null
   }
 })
 </script>
@@ -60,17 +109,30 @@ onUnmounted(() => {
 <template>
   <main class="app">
     <section class="player">
-      <StatusBar
-        :volume="volume"
-        :wifi-connected="wifiConnected"
-        :bluetooth-connected="bluetoothConnected"
-      />
+      <div class="status-wrapper">
+        <StatusBar
+          :volume="volume"
+          :wifi-connected="wifiConnected"
+          :bluetooth-connected="bluetoothConnected"
+        />
+
+        <button
+          type="button"
+          class="settings-button"
+          aria-label="WLAN-Einstellungen öffnen"
+          title="WLAN-Einstellungen"
+          @click="openWifiSettings"
+        >
+          ⚙
+        </button>
+      </div>
 
       <MainScreen
         :source="source"
         :cover-url="coverUrl"
         :title="title"
         @select-source="selectSource"
+        @activate-cover="handleCoverAction"
       />
 
       <div class="track-info-row">
@@ -81,37 +143,65 @@ onUnmounted(() => {
         />
       </div>
 
-    <section class="bottom-row">
-      <PlayerControls
-        :disabled="isLoading"
-        :is-playing="isPlaying"
-        @play="play"
-        @pause="pause"
-        @stop="stop"
-        @previous="previous"
-        @next="next"
-      />
+      <section class="bottom-row">
+        <PlayerControls
+          :disabled="isLoading"
+          :is-playing="isPlaying"
+          @play="play"
+          @pause="pause"
+          @stop="stop"
+          @previous="previous"
+          @next="next"
+        />
 
-    <VolumeBar
-      :volume="volume"
-      :disabled="isLoading"
-      @change="setVolume"
-    />
+        <VolumeBar
+          :volume="volume"
+          :disabled="isLoading"
+          @change="setVolume"
+        />
+      </section>
 
-</section>
-
-      <p v-if="errorMessage" class="error">
+      <p
+        v-if="errorMessage"
+        class="error"
+      >
         {{ errorMessage }}
       </p>
     </section>
+
+    <WebradioBrowser
+      v-if="webRadioBrowserOpen"
+      @close="webRadioBrowserOpen = false"
+    />
+
+    <SourceDetails
+      v-if="sourceDetailsOpen"
+      :source="source"
+      :title="title"
+      :artist="artist"
+      :album="album"
+      :cover-url="coverUrl"
+      :bluetooth-connected="bluetoothConnected"
+      @close="sourceDetailsOpen = false"
+    />
+
+    <WifiSettings
+      v-if="wifiSettingsOpen"
+      @close="wifiSettingsOpen = false"
+    />
   </main>
 </template>
 
 <style>
 :root {
-  font-family: Inter, Arial, Helvetica, sans-serif;
+  font-family:
+    Inter,
+    Arial,
+    Helvetica,
+    sans-serif;
   color: #f5f5f5;
   background: #1f2023;
+  color-scheme: dark;
 }
 
 * {
@@ -128,8 +218,14 @@ body,
 
 body {
   min-height: 100vh;
+  overflow-x: hidden;
   background:
-    radial-gradient(circle at center, #292c32 0%, #1b1d21 60%, #151619 100%);
+    radial-gradient(
+      circle at center,
+      #292c32 0%,
+      #1b1d21 60%,
+      #151619 100%
+    );
 }
 
 button,
@@ -141,6 +237,11 @@ button {
   touch-action: manipulation;
 }
 
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .app {
   display: flex;
   min-height: 100vh;
@@ -149,47 +250,53 @@ button {
   padding: 10px;
 }
 
-.bottom-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-top: 12px;
-  align-items: stretch;
-}
-
 .player {
   width: min(100%, 800px);
 }
 
-.main-screen {
-  display: grid;
-  grid-template-columns: 175px minmax(0, 1fr) 175px;
-  gap: 16px;
-  margin-top: 10px;
+.status-wrapper {
+  position: relative;
+  padding-right: 52px;
 }
 
-.source-column {
+.settings-button {
+  position: absolute;
+  top: 50%;
+  right: 0;
   display: grid;
-  grid-template-rows: 1fr 1fr;
-  gap: 14px;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 12px;
+  background: #343840;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  transform: translateY(-50%);
 }
 
-.now-playing {
-  display: flex;
+.settings-button:active {
+  background: #474d57;
+  transform: translateY(-50%) scale(0.96);
+}
+
+.track-info-row {
   min-width: 0;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
+.bottom-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 14px;
+  margin-top: 12px;
 }
 
 .error {
   margin: 10px 0 0;
   padding: 12px;
+  border: 1px solid rgb(255 120 120 / 20%);
   border-radius: 12px;
   background: #5a2323;
   color: #ffdede;
@@ -197,13 +304,8 @@ button:disabled {
 }
 
 @media (max-width: 700px) {
-  .main-screen {
-    grid-template-columns: 145px minmax(0, 1fr) 145px;
+  .bottom-row {
     gap: 10px;
-  }
-
-  .album-cover {
-    width: min(100%, 240px);
   }
 }
 
@@ -213,44 +315,24 @@ button:disabled {
     padding: 6px;
   }
 
-  .main-screen {
-    grid-template-columns: 155px minmax(0, 1fr) 155px;
-    gap: 10px;
-    margin-top: 7px;
+  .status-wrapper {
+    padding-right: 46px;
   }
 
-  .source-column {
+  .settings-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .bottom-row {
     gap: 9px;
-  }
-
-  .album-cover {
-    width: 205px;
-    border-radius: 17px;
-  }
-
-  .album-cover__placeholder span {
-    font-size: 54px;
-  }
-
-  .album-cover__placeholder small {
-    font-size: 14px;
-  }
-
-  .track-info {
     margin-top: 7px;
   }
 
-  .track-info h1 {
-    font-size: 21px;
+  .error {
+    margin-top: 6px;
+    padding: 8px;
+    font-size: 13px;
   }
-
-  .track-info__artist {
-    font-size: 16px;
-  }
-
-  .track-info__album {
-    font-size: 14px;
-  }
-
 }
 </style>

@@ -6,6 +6,7 @@ from tmba.core.player_service import player_service
 from tmba.core.source_manager import source_manager
 from tmba.services.airplay_service import airplay_service
 from tmba.services.bluetooth_service import bluetooth_service
+from tmba.services.station_service import station_service
 from tmba.services.webradio_service import webradio_service
 
 router = APIRouter()
@@ -71,9 +72,14 @@ class WebradioMetadataRequest(BaseModel):
 class WebradioPlaybackStatusRequest(BaseModel):
     status: str
 
+
 class WebradioPlayRequest(BaseModel):
     url: str
     station_name: str = ""
+
+
+class StationFavoriteRequest(BaseModel):
+    favorite: bool
 
 
 @router.get("/status")
@@ -107,7 +113,12 @@ def list_sources():
 
 @router.post("/player/refresh")
 def refresh_player():
-    return player_service.refresh_from_mpd()
+    active_source = source_manager.get_active_source()
+
+    if active_source == "webradio":
+        webradio_service.sync_from_mpd()
+
+    return player_service.get_status()
 
 
 @router.post("/player/play")
@@ -324,6 +335,141 @@ def update_bluetooth_progress(
             elapsed=request.elapsed,
             duration=request.duration,
         ),
+        "player": player_service.get_status(),
+    }
+
+
+@router.get("/webradio/stations")
+def list_webradio_stations(
+    favorites_only: bool = False,
+):
+    try:
+        stations = station_service.list_stations(
+            favorites_only=favorites_only,
+        )
+    except RuntimeError as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error),
+        ) from error
+
+    return {
+        "stations": stations,
+        "count": len(stations),
+    }
+
+
+@router.get("/webradio/stations/{station_id}")
+def get_webradio_station(station_id: str):
+    try:
+        station = station_service.get_station(station_id)
+    except RuntimeError as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error),
+        ) from error
+
+    if station is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Der Webradio-Sender wurde nicht gefunden.",
+        )
+
+    return {
+        "station": station,
+    }
+
+
+@router.delete("/webradio/stations/{station_id}")
+def delete_webradio_station(station_id: str):
+    try:
+        station = station_service.delete_station(station_id)
+    except RuntimeError as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error),
+        ) from error
+
+    if station is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Der Webradio-Sender wurde nicht gefunden.",
+        )
+
+    return {
+        "success": True,
+        "station": station,
+    }
+
+
+@router.post("/webradio/stations/{station_id}/favorite")
+def set_webradio_station_favorite(
+    station_id: str,
+    request: StationFavoriteRequest,
+):
+    try:
+        station = station_service.set_favorite(
+            station_id=station_id,
+            favorite=request.favorite,
+        )
+    except RuntimeError as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error),
+        ) from error
+
+    if station is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Der Webradio-Sender wurde nicht gefunden.",
+        )
+
+    return {
+        "success": True,
+        "station": station,
+    }
+
+
+@router.post("/webradio/stations/{station_id}/play")
+def play_saved_webradio_station(station_id: str):
+    try:
+        station = station_service.get_station(station_id)
+    except RuntimeError as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error),
+        ) from error
+
+    if station is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Der Webradio-Sender wurde nicht gefunden.",
+        )
+
+    result = webradio_service.play_station(
+        url=station["url"],
+        station_name=station["name"],
+    )
+
+    if not result.get("success"):
+        raise HTTPException(
+            status_code=503,
+            detail=result,
+        )
+
+    try:
+        played_station = station_service.mark_played(
+            station_id
+        )
+    except RuntimeError as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error),
+        ) from error
+
+    return {
+        **result,
+        "station": played_station or station,
         "player": player_service.get_status(),
     }
 

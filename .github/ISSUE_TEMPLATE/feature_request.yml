@@ -1,0 +1,45 @@
+name: Funktionswunsch
+description: Eine neue Funktion oder Verbesserung vorschlagen
+title: "[Feature] "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Ziel
+      description: Welches Problem soll die Funktion lösen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Gewünschte Lösung
+      description: Wie könnte die Funktion arbeiten?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Bereich
+      options:
+        - Audio
+        - DSP
+        - Webradio
+        - Bluetooth
+        - AirPlay
+        - Netzwerk
+        - Benutzeroberfläche
+        - Hardware
+        - Image Builder
+        - Dokumentation
+        - Andere
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Ergänzende Hinweise

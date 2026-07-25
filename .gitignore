@@ -1,5 +1,7 @@
 # macOS
 .DS_Store
+.AppleDouble
+.LSOverride
 
 # Python
 __pycache__/
@@ -7,23 +9,70 @@ __pycache__/
 *.pyo
 *.pyd
 *.so
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
 .venv/
 venv/
+env/
 
-# VS Code
+# Node / Vue / Vite
+node_modules/
+dist/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+config/local/
+config/secrets/
+
+# Editors
 .vscode/
+.idea/
+*.swp
+*.swo
+*~
 
 # Qt
 *.qmlc
 *.jsc
 
-# Logs
+# Logs and runtime files
 *.log
+*.pid
+run/
+tmp/
+.cache/
 
-# Build
+# Build output
 build/
-dist/
+release/
+artifacts/
 
-# Images
+# Raspberry Pi images
 *.img
+*.img.xz
 *.iso
+
+# Local databases and generated station data
+*.db
+*.sqlite
+*.sqlite3
+
+# Backups
+*.bak
+*.bak-*
+*.orig

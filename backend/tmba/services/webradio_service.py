@@ -1,8 +1,9 @@
 from typing import Any
 
+from tmba.core.event_bus import event_bus
+from tmba.services.artwork_service import artwork_service
 from tmba.services.base_source_service import BaseSourceService
 from tmba.services.mpd_service import mpd_service
-from tmba.core.event_bus import event_bus
 
 
 class WebradioService(BaseSourceService):
@@ -23,9 +24,7 @@ class WebradioService(BaseSourceService):
     ) -> dict[str, Any]:
         """Lädt und startet einen Webradio-Sender."""
 
-        normalized_station_name = (
-            station_name.strip() or "Webradio"
-        )
+        normalized_station_name = station_name.strip() or "Webradio"
 
         mpd_result = mpd_service.load_stream(
             url=url,
@@ -146,9 +145,6 @@ class WebradioService(BaseSourceService):
 
         playback_status = status_mapping.get(state, "idle")
 
-        # Nach einem Backend-Neustart läuft MPD eventuell weiter,
-        # während der WebradioService seinen Zustand verloren hat.
-        # Dann muss die Webradio-Sitzung wiederhergestellt werden.
         if state in {"play", "pause"}:
             current_status = self.get_status()
 
@@ -189,13 +185,61 @@ class WebradioService(BaseSourceService):
             or "Webradio"
         )
 
+        station_name = str(
+            mpd_track.get("station_name") or ""
+        ).strip()
+
+        previous_title = str(
+            current_track.get("title") or ""
+        ).strip()
+
+        previous_artist = str(
+            current_track.get("artist") or ""
+        ).strip()
+
+        previous_cover_url = str(
+            current_track.get("cover_url") or ""
+        ).strip()
+
+        source_cover_url = str(
+            mpd_track.get("cover_url") or ""
+        ).strip()
+
+        track_changed = (
+            title != previous_title
+            or artist != previous_artist
+        )
+
+        if source_cover_url:
+            # Ein direkt von MPD beziehungsweise der Quelle geliefertes
+            # Cover hat immer Vorrang.
+            cover_url = source_cover_url
+
+        elif not track_changed and previous_cover_url:
+            # Der Titel ist unverändert. Das vorhandene Cover wird
+            # weiterverwendet, ohne erneut den ArtworkService aufzurufen.
+            cover_url = previous_cover_url
+
+        elif track_changed:
+            # Nur bei einem echten Titelwechsel wird nach einem neuen
+            # Cover gesucht.
+            cover_url = artwork_service.get_cover(
+            title=title,
+            artist=artist,
+            album="",
+            source="webradio",
+            station=station_name,
+            existing_cover_url="",
+        )
+
+        else:
+            cover_url = previous_cover_url
+
         self.update_metadata(
             title=title,
             artist=artist,
             album=album,
-            cover_url=str(
-                mpd_track.get("cover_url") or ""
-            ),
+            cover_url=cover_url,
             duration=mpd_track.get("duration", 0),
             elapsed=mpd_track.get("elapsed", 0),
         )
