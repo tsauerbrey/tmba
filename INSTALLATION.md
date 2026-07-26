@@ -1,55 +1,85 @@
-# Installation TMBA v0.6.1-C
+# Installation TMBA v0.6.1-D
 
-## 1. ZIP entpacken und kopieren
+## Ziel
+
+Dieser Teilmeilenstein verändert keine Produktionslogik. Er ergänzt
+Vertragstests, API-Dokumentation, einen OpenAPI-Export und die abschließende
+Release-Prüfung für TMBA v0.6.1.
+
+## 1. Vorbedingungen
+
+TMBA v0.6.1-C muss installiert und committed sein.
+
+```bash
+cd ~/Development/tmba
+git status
+git pull
+```
+
+## 2. Paket entpacken
 
 ```bash
 cd ~/Downloads
-unzip -o TMBA-0.6.1-C-Pipeline-REST-API.zip -d TMBA-0.6.1-C-Pipeline-REST-API
-cd ~/Downloads/TMBA-0.6.1-C-Pipeline-REST-API
+
+unzip -o TMBA-0.6.1-D-Release-Hardening.zip \
+  -d TMBA-0.6.1-D-Release-Hardening
+
+cd ~/Downloads/TMBA-0.6.1-D-Release-Hardening
+
 cp -R . ~/Development/tmba/
 ```
 
-## 2. Skripte ausführbar machen
+## 3. Skripte ausführbar machen
 
 ```bash
-chmod +x ~/Development/tmba/scripts/check-audio-pipeline-api.sh
-chmod +x ~/Development/tmba/scripts/move-default-source-registration.py
+chmod +x \
+  ~/Development/tmba/scripts/check-release-0.6.1.sh
+
+chmod +x \
+  ~/Development/tmba/scripts/export-openapi.py
 ```
 
-## 3. Import-time-Registrierung entfernen
+## 4. Änderungen prüfen
 
 ```bash
 cd ~/Development/tmba
-python3 scripts/move-default-source-registration.py
+git status
 ```
 
-## 4. Tests
+## 5. Release-Abschlussprüfung
 
 ```bash
-./scripts/check-audio-pipeline-api.sh
+./scripts/check-release-0.6.1.sh
 ```
 
-## 5. Optional manuell testen
+Das Skript:
 
-Terminal 1:
+1. führt die neuen Vertragstests aus,
+2. prüft alle AudioManager-, Pipeline- und API-Tests,
+3. führt die vollständige Backend-Testsuite aus,
+4. exportiert `docs/api/openapi.json`,
+5. validiert das exportierte JSON,
+6. prüft, ob `/audio/pipeline` dokumentiert ist.
+
+## 6. Optional: Frontend-Build lokal prüfen
 
 ```bash
-cd ~/Development/tmba/backend
-source .venv/bin/activate
-PYTHONPATH=. uvicorn tmba.main:app --reload
+cd ~/Development/tmba/frontend
+npm ci
+npm run build
 ```
 
-Terminal 2:
+Falls dein Frontend-Verzeichnis anders heißt, verwende den bereits in deinem
+GitHub-Workflow genutzten Pfad.
 
-```bash
-curl -s http://127.0.0.1:8000/audio/pipeline | python3 -m json.tool
-```
-
-## 6. Commit
+## 7. Commit und Push
 
 ```bash
 cd ~/Development/tmba
+
 git add .
-git commit -m "Expose AudioPipeline status through REST API"
+git commit -m "Finalize AudioPipeline v0.6.1 release"
 git push
 ```
+
+Danach müssen die GitHub-Actions-Workflows wieder grün sein.

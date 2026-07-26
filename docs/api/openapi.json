@@ -1,0 +1,2192 @@
+{
+  "components": {
+    "schemas": {
+      "AirPlayMetadataRequest": {
+        "properties": {
+          "album": {
+            "default": "",
+            "title": "Album",
+            "type": "string"
+          },
+          "artist": {
+            "default": "",
+            "title": "Artist",
+            "type": "string"
+          },
+          "cover_url": {
+            "default": "",
+            "title": "Cover Url",
+            "type": "string"
+          },
+          "duration": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "default": 0,
+            "title": "Duration"
+          },
+          "elapsed": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "default": 0,
+            "title": "Elapsed"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "title": "AirPlayMetadataRequest",
+        "type": "object"
+      },
+      "AirPlayPlaybackStatusRequest": {
+        "properties": {
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "AirPlayPlaybackStatusRequest",
+        "type": "object"
+      },
+      "AirPlayProgressRequest": {
+        "properties": {
+          "duration": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration"
+          },
+          "elapsed": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Elapsed"
+          }
+        },
+        "required": [
+          "elapsed"
+        ],
+        "title": "AirPlayProgressRequest",
+        "type": "object"
+      },
+      "AudioSourceRequest": {
+        "properties": {
+          "force": {
+            "default": false,
+            "title": "Force",
+            "type": "boolean"
+          },
+          "source": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source"
+        ],
+        "title": "AudioSourceRequest",
+        "type": "object"
+      },
+      "AudioVolumeRequest": {
+        "properties": {
+          "volume": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Volume",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "volume"
+        ],
+        "title": "AudioVolumeRequest",
+        "type": "object"
+      },
+      "BluetoothMetadataRequest": {
+        "properties": {
+          "album": {
+            "default": "",
+            "title": "Album",
+            "type": "string"
+          },
+          "artist": {
+            "default": "",
+            "title": "Artist",
+            "type": "string"
+          },
+          "cover_url": {
+            "default": "",
+            "title": "Cover Url",
+            "type": "string"
+          },
+          "duration": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "default": 0,
+            "title": "Duration"
+          },
+          "elapsed": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "default": 0,
+            "title": "Elapsed"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "title": "BluetoothMetadataRequest",
+        "type": "object"
+      },
+      "BluetoothPlaybackStatusRequest": {
+        "properties": {
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "BluetoothPlaybackStatusRequest",
+        "type": "object"
+      },
+      "BluetoothProgressRequest": {
+        "properties": {
+          "duration": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration"
+          },
+          "elapsed": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Elapsed"
+          }
+        },
+        "required": [
+          "elapsed"
+        ],
+        "title": "BluetoothProgressRequest",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "OnlineStationImportRequest": {
+        "properties": {
+          "favorite": {
+            "default": false,
+            "title": "Favorite",
+            "type": "boolean"
+          },
+          "station_uuid": {
+            "title": "Station Uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "station_uuid"
+        ],
+        "title": "OnlineStationImportRequest",
+        "type": "object"
+      },
+      "SourceAvailabilityRequest": {
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "available"
+        ],
+        "title": "SourceAvailabilityRequest",
+        "type": "object"
+      },
+      "SourceRequest": {
+        "properties": {
+          "source": {
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source"
+        ],
+        "title": "SourceRequest",
+        "type": "object"
+      },
+      "StationFavoriteRequest": {
+        "properties": {
+          "favorite": {
+            "title": "Favorite",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "favorite"
+        ],
+        "title": "StationFavoriteRequest",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "VolumeRequest": {
+        "properties": {
+          "volume": {
+            "title": "Volume",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "volume"
+        ],
+        "title": "VolumeRequest",
+        "type": "object"
+      },
+      "WebradioMetadataRequest": {
+        "properties": {
+          "album": {
+            "default": "",
+            "title": "Album",
+            "type": "string"
+          },
+          "artist": {
+            "default": "",
+            "title": "Artist",
+            "type": "string"
+          },
+          "cover_url": {
+            "default": "",
+            "title": "Cover Url",
+            "type": "string"
+          },
+          "duration": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "default": 0,
+            "title": "Duration"
+          },
+          "elapsed": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "default": 0,
+            "title": "Elapsed"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "title": "WebradioMetadataRequest",
+        "type": "object"
+      },
+      "WebradioPlayRequest": {
+        "properties": {
+          "station_name": {
+            "default": "",
+            "title": "Station Name",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "WebradioPlayRequest",
+        "type": "object"
+      },
+      "WebradioPlaybackStatusRequest": {
+        "properties": {
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "WebradioPlaybackStatusRequest",
+        "type": "object"
+      },
+      "WifiConnectRequest": {
+        "properties": {
+          "hidden": {
+            "default": false,
+            "title": "Hidden",
+            "type": "boolean"
+          },
+          "password": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Password"
+          },
+          "ssid": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Ssid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ssid"
+        ],
+        "title": "WifiConnectRequest",
+        "type": "object"
+      },
+      "WifiDisconnectRequest": {
+        "properties": {
+          "interface": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interface"
+          }
+        },
+        "title": "WifiDisconnectRequest",
+        "type": "object"
+      },
+      "WifiForgetRequest": {
+        "properties": {
+          "connection": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Connection",
+            "type": "string"
+          }
+        },
+        "required": [
+          "connection"
+        ],
+        "title": "WifiForgetRequest",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Thoralfs Mobile Beschallungs-Anlage",
+    "title": "TMBA",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Root"
+      }
+    },
+    "/airplay/metadata": {
+      "post": {
+        "operationId": "update_airplay_metadata_airplay_metadata_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AirPlayMetadataRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Airplay Metadata"
+      }
+    },
+    "/airplay/playback-status": {
+      "post": {
+        "operationId": "set_airplay_playback_status_airplay_playback_status_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AirPlayPlaybackStatusRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Airplay Playback Status"
+      }
+    },
+    "/airplay/progress": {
+      "post": {
+        "operationId": "update_airplay_progress_airplay_progress_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AirPlayProgressRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Airplay Progress"
+      }
+    },
+    "/airplay/session/end": {
+      "post": {
+        "operationId": "end_airplay_session_airplay_session_end_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "End Airplay Session"
+      }
+    },
+    "/airplay/session/start": {
+      "post": {
+        "operationId": "start_airplay_session_airplay_session_start_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Start Airplay Session"
+      }
+    },
+    "/airplay/status": {
+      "get": {
+        "operationId": "get_airplay_status_airplay_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Airplay Status"
+      }
+    },
+    "/audio/next": {
+      "post": {
+        "operationId": "next_audio_audio_next_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Next Audio",
+        "tags": [
+          "Audio"
+        ]
+      }
+    },
+    "/audio/pause": {
+      "post": {
+        "operationId": "pause_audio_audio_pause_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Pause Audio",
+        "tags": [
+          "Audio"
+        ]
+      }
+    },
+    "/audio/pipeline": {
+      "get": {
+        "description": "Return the complete logical AudioPipeline status.",
+        "operationId": "get_audio_pipeline_status_audio_pipeline_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Audio Pipeline Status",
+        "tags": [
+          "Audio"
+        ]
+      }
+    },
+    "/audio/play": {
+      "post": {
+        "operationId": "play_audio_audio_play_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Play Audio",
+        "tags": [
+          "Audio"
+        ]
+      }
+    },
+    "/audio/previous": {
+      "post": {
+        "operationId": "previous_audio_audio_previous_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Previous Audio",
+        "tags": [
+          "Audio"
+        ]
+      }
+    },
+    "/audio/source": {
+      "post": {
+        "operationId": "select_audio_source_audio_source_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AudioSourceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Select Audio Source",
+        "tags": [
+          "Audio"
+        ]
+      }
+    },
+    "/audio/status": {
+      "get": {
+        "operationId": "get_audio_status_audio_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Audio Status",
+        "tags": [
+          "Audio"
+        ]
+      }
+    },
+    "/audio/stop": {
+      "post": {
+        "operationId": "stop_audio_audio_stop_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Stop Audio",
+        "tags": [
+          "Audio"
+        ]
+      }
+    },
+    "/audio/sync": {
+      "post": {
+        "operationId": "synchronize_audio_audio_sync_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Synchronize Audio",
+        "tags": [
+          "Audio"
+        ]
+      }
+    },
+    "/audio/volume": {
+      "post": {
+        "operationId": "set_audio_volume_audio_volume_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AudioVolumeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Audio Volume",
+        "tags": [
+          "Audio"
+        ]
+      }
+    },
+    "/bluetooth/metadata": {
+      "post": {
+        "operationId": "update_bluetooth_metadata_bluetooth_metadata_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BluetoothMetadataRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Bluetooth Metadata"
+      }
+    },
+    "/bluetooth/playback-status": {
+      "post": {
+        "operationId": "set_bluetooth_playback_status_bluetooth_playback_status_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BluetoothPlaybackStatusRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Bluetooth Playback Status"
+      }
+    },
+    "/bluetooth/progress": {
+      "post": {
+        "operationId": "update_bluetooth_progress_bluetooth_progress_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BluetoothProgressRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Bluetooth Progress"
+      }
+    },
+    "/bluetooth/session/end": {
+      "post": {
+        "operationId": "end_bluetooth_session_bluetooth_session_end_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "End Bluetooth Session"
+      }
+    },
+    "/bluetooth/session/start": {
+      "post": {
+        "operationId": "start_bluetooth_session_bluetooth_session_start_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Start Bluetooth Session"
+      }
+    },
+    "/bluetooth/status": {
+      "get": {
+        "operationId": "get_bluetooth_status_bluetooth_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Bluetooth Status"
+      }
+    },
+    "/network/interfaces": {
+      "get": {
+        "operationId": "get_network_interfaces_network_interfaces_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Network Interfaces",
+        "tags": [
+          "Network"
+        ]
+      }
+    },
+    "/network/status": {
+      "get": {
+        "operationId": "get_network_status_network_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Network Status",
+        "tags": [
+          "Network"
+        ]
+      }
+    },
+    "/network/wifi/connect": {
+      "post": {
+        "operationId": "connect_wifi_network_wifi_connect_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WifiConnectRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Connect Wifi",
+        "tags": [
+          "Network"
+        ]
+      }
+    },
+    "/network/wifi/disconnect": {
+      "post": {
+        "operationId": "disconnect_wifi_network_wifi_disconnect_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WifiDisconnectRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Disconnect Wifi",
+        "tags": [
+          "Network"
+        ]
+      }
+    },
+    "/network/wifi/forget": {
+      "post": {
+        "operationId": "forget_wifi_network_wifi_forget_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WifiForgetRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Forget Wifi",
+        "tags": [
+          "Network"
+        ]
+      }
+    },
+    "/network/wifi/saved": {
+      "get": {
+        "operationId": "get_saved_wifi_connections_network_wifi_saved_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Saved Wifi Connections",
+        "tags": [
+          "Network"
+        ]
+      }
+    },
+    "/network/wifi/scan": {
+      "get": {
+        "operationId": "scan_wifi_networks_network_wifi_scan_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Scan Wifi Networks",
+        "tags": [
+          "Network"
+        ]
+      }
+    },
+    "/player/next": {
+      "post": {
+        "operationId": "next_track_player_next_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Next Track"
+      }
+    },
+    "/player/pause": {
+      "post": {
+        "operationId": "pause_player_pause_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Pause"
+      }
+    },
+    "/player/play": {
+      "post": {
+        "operationId": "play_player_play_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Play"
+      }
+    },
+    "/player/previous": {
+      "post": {
+        "operationId": "previous_player_previous_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Previous"
+      }
+    },
+    "/player/refresh": {
+      "post": {
+        "operationId": "refresh_player_player_refresh_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Refresh Player"
+      }
+    },
+    "/player/stop": {
+      "post": {
+        "operationId": "stop_player_stop_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Stop"
+      }
+    },
+    "/source": {
+      "post": {
+        "operationId": "select_source_source_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SourceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Select Source"
+      }
+    },
+    "/sources": {
+      "get": {
+        "operationId": "list_sources_sources_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Sources"
+      }
+    },
+    "/sources/{source}/availability": {
+      "get": {
+        "operationId": "get_source_availability_sources__source__availability_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "source",
+            "required": true,
+            "schema": {
+              "title": "Source",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Source Availability"
+      },
+      "post": {
+        "operationId": "set_source_availability_sources__source__availability_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "source",
+            "required": true,
+            "schema": {
+              "title": "Source",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SourceAvailabilityRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Source Availability"
+      }
+    },
+    "/status": {
+      "get": {
+        "operationId": "status_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Status"
+      }
+    },
+    "/system/health": {
+      "get": {
+        "operationId": "get_system_health_system_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get System Health",
+        "tags": [
+          "System"
+        ]
+      }
+    },
+    "/system/info": {
+      "get": {
+        "operationId": "get_system_info_system_info_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get System Info",
+        "tags": [
+          "System"
+        ]
+      }
+    },
+    "/volume": {
+      "post": {
+        "operationId": "set_volume_volume_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VolumeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Volume"
+      }
+    },
+    "/webradio/metadata": {
+      "post": {
+        "operationId": "update_webradio_metadata_webradio_metadata_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebradioMetadataRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Webradio Metadata"
+      }
+    },
+    "/webradio/online/search": {
+      "get": {
+        "description": "Sucht Sender in der Radio-Browser-Datenbank.",
+        "operationId": "search_online_webradio_stations_webradio_online_search_get",
+        "parameters": [
+          {
+            "description": "Sendername oder Teil des Sendernamens",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "default": "",
+              "description": "Sendername oder Teil des Sendernamens",
+              "maxLength": 120,
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "description": "ISO-Ländercode, zum Beispiel DE",
+            "in": "query",
+            "name": "country_code",
+            "required": false,
+            "schema": {
+              "default": "",
+              "description": "ISO-Ländercode, zum Beispiel DE",
+              "maxLength": 2,
+              "minLength": 0,
+              "title": "Country Code",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Genre oder Radio-Browser-Tag",
+            "in": "query",
+            "name": "tag",
+            "required": false,
+            "schema": {
+              "default": "",
+              "description": "Genre oder Radio-Browser-Tag",
+              "maxLength": 80,
+              "title": "Tag",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Sprache des Senders",
+            "in": "query",
+            "name": "language",
+            "required": false,
+            "schema": {
+              "default": "",
+              "description": "Sprache des Senders",
+              "maxLength": 80,
+              "title": "Language",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Minimale Bitrate in kbit/s",
+            "in": "query",
+            "name": "minimum_bitrate",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "description": "Minimale Bitrate in kbit/s",
+              "maximum": 10000,
+              "minimum": 0,
+              "title": "Minimum Bitrate",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Maximale Anzahl der Suchergebnisse",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "description": "Maximale Anzahl der Suchergebnisse",
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Search Online Webradio Stations",
+        "tags": [
+          "Webradio Online"
+        ]
+      }
+    },
+    "/webradio/online/stations/import": {
+      "post": {
+        "description": "Übernimmt einen Radio-Browser-Sender dauerhaft\nin die lokale TMBA-Senderliste.",
+        "operationId": "import_online_webradio_station_webradio_online_stations_import_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OnlineStationImportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Import Online Webradio Station",
+        "tags": [
+          "Webradio Online"
+        ]
+      }
+    },
+    "/webradio/online/stations/{station_uuid}": {
+      "get": {
+        "description": "Lädt die vollständigen Daten einer Online-Station.",
+        "operationId": "get_online_webradio_station_webradio_online_stations__station_uuid__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "station_uuid",
+            "required": true,
+            "schema": {
+              "title": "Station Uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Online Webradio Station",
+        "tags": [
+          "Webradio Online"
+        ]
+      }
+    },
+    "/webradio/pause": {
+      "post": {
+        "operationId": "pause_webradio_webradio_pause_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Pause Webradio"
+      }
+    },
+    "/webradio/play": {
+      "post": {
+        "operationId": "play_webradio_webradio_play_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Play Webradio"
+      }
+    },
+    "/webradio/play-station": {
+      "post": {
+        "operationId": "play_webradio_station_webradio_play_station_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebradioPlayRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Play Webradio Station"
+      }
+    },
+    "/webradio/playback-status": {
+      "post": {
+        "operationId": "set_webradio_playback_status_webradio_playback_status_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebradioPlaybackStatusRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Webradio Playback Status"
+      }
+    },
+    "/webradio/session/end": {
+      "post": {
+        "operationId": "end_webradio_session_webradio_session_end_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "End Webradio Session"
+      }
+    },
+    "/webradio/session/start": {
+      "post": {
+        "operationId": "start_webradio_session_webradio_session_start_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Start Webradio Session"
+      }
+    },
+    "/webradio/stations": {
+      "get": {
+        "operationId": "list_webradio_stations_webradio_stations_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "favorites_only",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Favorites Only",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Webradio Stations"
+      }
+    },
+    "/webradio/stations/{station_id}": {
+      "delete": {
+        "operationId": "delete_webradio_station_webradio_stations__station_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "station_id",
+            "required": true,
+            "schema": {
+              "title": "Station Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Webradio Station"
+      },
+      "get": {
+        "operationId": "get_webradio_station_webradio_stations__station_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "station_id",
+            "required": true,
+            "schema": {
+              "title": "Station Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Webradio Station"
+      }
+    },
+    "/webradio/stations/{station_id}/favorite": {
+      "post": {
+        "operationId": "set_webradio_station_favorite_webradio_stations__station_id__favorite_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "station_id",
+            "required": true,
+            "schema": {
+              "title": "Station Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StationFavoriteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Webradio Station Favorite"
+      }
+    },
+    "/webradio/stations/{station_id}/play": {
+      "post": {
+        "operationId": "play_saved_webradio_station_webradio_stations__station_id__play_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "station_id",
+            "required": true,
+            "schema": {
+              "title": "Station Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Play Saved Webradio Station"
+      }
+    },
+    "/webradio/status": {
+      "get": {
+        "operationId": "get_webradio_status_webradio_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Webradio Status"
+      }
+    },
+    "/webradio/stop": {
+      "post": {
+        "operationId": "stop_webradio_webradio_stop_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Stop Webradio"
+      }
+    },
+    "/webradio/sync": {
+      "post": {
+        "operationId": "sync_webradio_from_mpd_webradio_sync_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Sync Webradio From Mpd"
+      }
+    }
+  }
+}
