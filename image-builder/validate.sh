@@ -16,6 +16,7 @@ require_file "$ROOT_DIR/prepare-pigen.sh"
 require_file "$ROOT_DIR/preflight.sh"
 require_file "$ROOT_DIR/lib/common.sh"
 require_file "$ROOT_DIR/pi-gen-stage/EXPORT_IMAGE"
+require_file "$ROOT_DIR/pi-gen-stage/prerun.sh"
 require_file "$ROOT_DIR/pi-gen-stage/00-tmba-packages/00-packages"
 require_file "$ROOT_DIR/pi-gen-stage/01-tmba-files/00-run.sh"
 require_file "$ROOT_DIR/pi-gen-stage/02-tmba-install/00-run-chroot.sh"
@@ -58,6 +59,7 @@ for script in \
   "$ROOT_DIR/prepare-pigen.sh" \
   "$ROOT_DIR/preflight.sh" \
   "$ROOT_DIR/validate.sh" \
+  "$ROOT_DIR/pi-gen-stage/prerun.sh" \
   "$ROOT_DIR/pi-gen-stage/01-tmba-files/00-run.sh" \
   "$ROOT_DIR/pi-gen-stage/02-tmba-install/00-run-chroot.sh" \
   "$ROOT_DIR/pi-gen-stage/03-tmba-hardware/00-run.sh" \
@@ -68,6 +70,7 @@ done
 
 grep -q '^dtoverlay=hifiberry-dacplus$' "$ROOT_DIR/pi-gen-stage/03-tmba-hardware/00-run.sh" || fail "HiFiBerry-Overlay fehlt"
 grep -q '/opt/tmba/config' "$ROOT_DIR/pi-gen-stage/02-tmba-install/00-run-chroot.sh" || fail "Runtime-Konfiguration wird nicht installiert"
+grep -q 'copy_previous' "$ROOT_DIR/pi-gen-stage/prerun.sh" || fail "Custom Stage übernimmt das Root-Dateisystem der vorherigen Stage nicht"
 grep -q 'tmba-boot-diagnostics.service' "$ROOT_DIR/pi-gen-stage/04-tmba-services/00-run-chroot.sh" || fail "Bootdiagnose-Service wird nicht aktiviert"
 grep -q 'tmba-healthcheck.service' "$ROOT_DIR/pi-gen-stage/04-tmba-services/00-run-chroot.sh" || fail "Healthcheck-Service wird nicht aktiviert"
 grep -q "STAGE_LIST='stage0 stage1 stage2 stage-tmba'" "$ROOT_DIR/prepare-pigen.sh" || fail "pi-gen Stage-Liste fehlt"

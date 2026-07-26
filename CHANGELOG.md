@@ -7,6 +7,18 @@ dem Schema der semantischen Versionierung.
 
 ## [Unreleased]
 
+## [0.8.2] – 2026-07-26
+
+### Behoben
+
+- benutzerdefinierte `stage-tmba` übernimmt das Root-Dateisystem aus `stage2`
+- Buildabbruch `Unable to chroot/chdir ... stage-tmba/rootfs` behoben
+
+### Tests
+
+- Builder-Test für `prerun.sh` und `copy_previous` ergänzt
+
+
 ### Geplant
 
 - zentrale AudioPipeline

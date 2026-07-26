@@ -27,9 +27,9 @@ def test_builder_validation_succeeds() -> None:
 def test_dry_run_creates_complete_plan() -> None:
     result = run(str(BUILDER / "build.sh"), "--dry-run")
     assert result.returncode == 0, result.stderr
-    plan = BUILDER / "dist/tmba-developer-0.8.1-build-plan.txt"
+    plan = BUILDER / "dist/tmba-developer-0.8.2-build-plan.txt"
     text = plan.read_text()
-    assert "version=0.8.1" in text
+    assert "version=0.8.2" in text
     assert "pi_gen_ref=2026-06-18-raspios-bookworm-arm64" in text
     assert "docker_platform=linux/arm64" in text
     assert "pi_gen_commit=" in text
@@ -133,7 +133,15 @@ def test_backend_listens_on_image_network() -> None:
     assert "ExecStartPre=" in unit
 
 
-def test_release_file_is_v081() -> None:
+
+def test_custom_stage_copies_previous_rootfs() -> None:
+    prerun = BUILDER / "pi-gen-stage/prerun.sh"
+    text = prerun.read_text()
+    assert prerun.is_file()
+    assert "copy_previous" in text
+    assert '${ROOTFS_DIR}' in text
+
+def test_release_file_is_v082() -> None:
     finalize = (BUILDER / "pi-gen-stage/05-tmba-finalize/00-run-chroot.sh").read_text()
-    assert "TMBA_IMAGE_VERSION=0.8.1" in finalize
-    assert "TMBA-OS 0.8.1" in finalize
+    assert "TMBA_IMAGE_VERSION=0.8.2" in finalize
+    assert "TMBA-OS 0.8.2" in finalize
