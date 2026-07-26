@@ -21,6 +21,7 @@ require_file "$ROOT_DIR/pi-gen-stage/00-tmba-packages/00-packages"
 require_file "$ROOT_DIR/pi-gen-stage/01-tmba-files/00-run.sh"
 require_file "$ROOT_DIR/pi-gen-stage/02-tmba-install/00-run-chroot.sh"
 require_file "$ROOT_DIR/pi-gen-stage/03-tmba-hardware/00-run.sh"
+require_file "$ROOT_DIR/pi-gen-stage/03-tmba-hardware/99-tmba-audio.conf"
 require_file "$ROOT_DIR/pi-gen-stage/04-tmba-services/00-run-chroot.sh"
 require_file "$ROOT_DIR/pi-gen-stage/05-tmba-finalize/00-run-chroot.sh"
 require_file "$ROOT_DIR/overlays/rootfs/etc/systemd/system/tmba-backend.service"
@@ -36,7 +37,11 @@ done
 
 # shellcheck disable=SC1090
 source "$CONFIG_FILE"
-[[ "$TMBA_IMAGE_VERSION" == "$(repo_version "$REPO_DIR")" ]] || fail "VERSION und TMBA_IMAGE_VERSION stimmen nicht überein"
+REPO_VERSION="$(repo_version "$REPO_DIR")"
+[[ "$TMBA_IMAGE_VERSION" == "$REPO_VERSION" ]] || fail "VERSION und TMBA_IMAGE_VERSION stimmen nicht überein"
+grep -Eq "^[[:space:]]*version:[[:space:]]*${REPO_VERSION}[[:space:]]*$" "$REPO_DIR/config/system.yaml" || fail "VERSION und config/system.yaml stimmen nicht überein"
+grep -q "TMBA_IMAGE_VERSION=${REPO_VERSION}" "$ROOT_DIR/pi-gen-stage/05-tmba-finalize/00-run-chroot.sh" || fail "VERSION und Image-Release-Datei stimmen nicht überein"
+grep -q "TMBA-OS ${REPO_VERSION}" "$ROOT_DIR/pi-gen-stage/05-tmba-finalize/00-run-chroot.sh" || fail "VERSION und MOTD stimmen nicht überein"
 [[ "$TMBA_TARGET_BOARD" == "raspberry-pi-4" ]] || fail "Unerwartetes Zielboard"
 [[ "$TMBA_TARGET_ARCH" == "arm64" ]] || fail "Unerwartete Zielarchitektur"
 [[ "$TMBA_BASE_OS" == "raspberry-pi-os-lite" ]] || fail "Unerwartetes Basisbetriebssystem"
@@ -69,6 +74,7 @@ for script in \
 done
 
 grep -q '^dtoverlay=hifiberry-dacplus$' "$ROOT_DIR/pi-gen-stage/03-tmba-hardware/00-run.sh" || fail "HiFiBerry-Overlay fehlt"
+grep -q '\${STAGE_DIR}/03-tmba-hardware/99-tmba-audio.conf' "$ROOT_DIR/pi-gen-stage/03-tmba-hardware/00-run.sh" || fail "Hardware-Asset wird nicht über STAGE_DIR adressiert"
 grep -q '/opt/tmba/config' "$ROOT_DIR/pi-gen-stage/02-tmba-install/00-run-chroot.sh" || fail "Runtime-Konfiguration wird nicht installiert"
 grep -q 'copy_previous' "$ROOT_DIR/pi-gen-stage/prerun.sh" || fail "Custom Stage übernimmt das Root-Dateisystem der vorherigen Stage nicht"
 grep -q 'tmba-boot-diagnostics.service' "$ROOT_DIR/pi-gen-stage/04-tmba-services/00-run-chroot.sh" || fail "Bootdiagnose-Service wird nicht aktiviert"

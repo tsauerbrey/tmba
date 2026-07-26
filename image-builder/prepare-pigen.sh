@@ -46,6 +46,17 @@ git -C "$PIGEN_DIR" checkout --detach "$resolved_commit"
 actual_commit="$(git -C "$PIGEN_DIR" rev-parse HEAD)"
 [[ "$actual_commit" == "$resolved_commit" ]] || fail "pi-gen-Commit stimmt nicht überein."
 
+PIGEN_PATCH="$ROOT_DIR/patches/pi-gen/0001-refresh-stale-loop-partition-nodes.patch"
+[[ -f "$PIGEN_PATCH" ]] || fail "pi-gen-Loop-Patch fehlt: $PIGEN_PATCH"
+if git -C "$PIGEN_DIR" apply --check "$PIGEN_PATCH"; then
+  git -C "$PIGEN_DIR" apply "$PIGEN_PATCH"
+elif git -C "$PIGEN_DIR" apply --reverse --check "$PIGEN_PATCH"; then
+  info "pi-gen-Loop-Patch ist bereits angewendet."
+else
+  fail "pi-gen-Loop-Patch passt nicht zum gepinnten Commit $actual_commit"
+fi
+info "pi-gen-Loop-Geräteprüfung aktiviert."
+
 rm -rf "$PIGEN_DIR/tmba-repo"
 mkdir -p "$PIGEN_DIR/tmba-repo"
 rsync -a --delete \

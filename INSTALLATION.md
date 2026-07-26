@@ -1,6 +1,6 @@
 # TMBA Installation
 
-## v0.8.2 – Erstes bootfähiges TMBA-OS
+## v0.8.0 – Erstes bootfähiges TMBA-OS
 
 ### Lokale Prüfung
 

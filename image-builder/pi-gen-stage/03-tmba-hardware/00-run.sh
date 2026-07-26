@@ -11,4 +11,6 @@ grep -q '^dtoverlay=hifiberry-dacplus$' "$CONFIG_TXT" || cat >> "$CONFIG_TXT" <<
 dtoverlay=hifiberry-dacplus
 EOT
 
-install -Dm644 files/99-tmba-audio.conf "${ROOTFS_DIR}/etc/modprobe.d/99-tmba-audio.conf"
+install -Dm644 \
+  "${STAGE_DIR}/03-tmba-hardware/99-tmba-audio.conf" \
+  "${ROOTFS_DIR}/etc/modprobe.d/99-tmba-audio.conf"

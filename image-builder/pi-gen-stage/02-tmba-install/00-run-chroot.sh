@@ -24,6 +24,6 @@ python3 -m venv /opt/tmba/backend/.venv
 /opt/tmba/backend/.venv/bin/python -m pip install --upgrade pip wheel setuptools
 /opt/tmba/backend/.venv/bin/python -m pip install --no-cache-dir -r /opt/tmba/backend/requirements.txt
 
-sudo -u tmba env PYTHONPATH=/opt/tmba/backend \
+runuser -u tmba -- env PYTHONPATH=/opt/tmba/backend \
   /opt/tmba/backend/.venv/bin/python -c \
   'from tmba.core.config import get_settings; s=get_settings(); print(s.system.project.full_name, s.system.project.version)'

@@ -27,9 +27,9 @@ def test_builder_validation_succeeds() -> None:
 def test_dry_run_creates_complete_plan() -> None:
     result = run(str(BUILDER / "build.sh"), "--dry-run")
     assert result.returncode == 0, result.stderr
-    plan = BUILDER / "dist/tmba-developer-0.8.2-build-plan.txt"
+    plan = BUILDER / "dist/tmba-developer-0.8.4-build-plan.txt"
     text = plan.read_text()
-    assert "version=0.8.2" in text
+    assert "version=0.8.4" in text
     assert "pi_gen_ref=2026-06-18-raspios-bookworm-arm64" in text
     assert "docker_platform=linux/arm64" in text
     assert "pi_gen_commit=" in text
@@ -141,7 +141,45 @@ def test_custom_stage_copies_previous_rootfs() -> None:
     assert "copy_previous" in text
     assert '${ROOTFS_DIR}' in text
 
-def test_release_file_is_v082() -> None:
+def test_hardware_asset_uses_stage_dir() -> None:
+    stage = BUILDER / "pi-gen-stage"
+    script = (stage / "03-tmba-hardware/00-run.sh").read_text()
+    assert (stage / "03-tmba-hardware/99-tmba-audio.conf").is_file()
+    assert "${STAGE_DIR}/03-tmba-hardware/99-tmba-audio.conf" in script
+    assert "files/99-tmba-audio.conf" not in script
+
+
+def test_runtime_check_uses_runuser_without_sudo() -> None:
+    install = (BUILDER / "pi-gen-stage/02-tmba-install/00-run-chroot.sh").read_text()
+    assert "runuser -u tmba -- env" in install
+    assert "sudo -u tmba" not in install
+
+
+def test_all_release_versions_are_v084() -> None:
+    version = (ROOT / "VERSION").read_text().strip()
+    image_env = (BUILDER / "config/image.env").read_text()
+    system = (ROOT / "config/system.yaml").read_text()
     finalize = (BUILDER / "pi-gen-stage/05-tmba-finalize/00-run-chroot.sh").read_text()
-    assert "TMBA_IMAGE_VERSION=0.8.2" in finalize
-    assert "TMBA-OS 0.8.2" in finalize
+    assert version == "0.8.4"
+    assert "TMBA_IMAGE_VERSION=0.8.4" in image_env
+    assert "version: 0.8.4" in system
+    assert "TMBA_IMAGE_VERSION=0.8.4" in finalize
+    assert "TMBA-OS 0.8.4" in finalize
+
+
+def test_pigen_loop_patch_replaces_stale_partition_nodes() -> None:
+    patch = BUILDER / "patches/pi-gen/0001-refresh-stale-loop-partition-nodes.patch"
+    text = patch.read_text()
+    prepare = (BUILDER / "prepare-pigen.sh").read_text()
+    assert patch.is_file()
+    assert "Replacing stale /dev/$partition" in text
+    assert "stat -c '%t'" in text
+    assert "stat -c '%T'" in text
+    assert 'rm -f "/dev/$partition"' in text
+    assert 'git -C "$PIGEN_DIR" apply' in prepare
+
+
+def test_check_script_reads_version_dynamically() -> None:
+    script = (ROOT / "scripts/check-image-builder.sh").read_text()
+    assert 'VERSION="$(cat "$ROOT_DIR/VERSION")"' in script
+    assert "v0.8.2" not in script

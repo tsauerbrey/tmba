@@ -6,7 +6,8 @@ PYTHON="$BACKEND_DIR/.venv/bin/python"
 [[ -x "$PYTHON" ]] || { echo "Fehler: Backend-venv fehlt: $PYTHON" >&2; exit 1; }
 export PYTHONPATH="$BACKEND_DIR${PYTHONPATH:+:$PYTHONPATH}"
 
-echo "TMBA v0.8.2 – pi-gen Stage Chaining"
+VERSION="$(cat "$ROOT_DIR/VERSION")"
+echo "TMBA v${VERSION} – Image Builder"
 echo
 echo "1. Builder-Konfiguration"
 "$ROOT_DIR/image-builder/validate.sh"
@@ -26,4 +27,4 @@ echo "5. Vollständige Backend-Tests"
 cd "$BACKEND_DIR"
 "$PYTHON" -m pytest -q
 echo
-echo "TMBA v0.8.2 erfolgreich geprüft."
+echo "TMBA v${VERSION} erfolgreich geprüft."

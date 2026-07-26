@@ -1,0 +1,38 @@
+--- a/scripts/common
++++ b/scripts/common
+@@ -122,11 +122,34 @@
+ 	local line
+ 	local partition
+ 	local majmin
++	local expected_major
++	local expected_minor
++	local current_major_hex
++	local current_minor_hex
++	local current_major
++	local current_minor
+ 	lsblk -r -n -o "NAME,MAJ:MIN" "$1" | grep -v "^${1#/dev/} " | while read -r line; do
+ 		partition="${line%% *}"
+ 		majmin="${line#* }"
++		expected_major="${majmin%:*}"
++		expected_minor="${majmin#*:}"
++
++		# Docker Desktop/OrbStack can retain stale partition device nodes in
++		# /dev after a previous loop mapping has been detached. A plain -b test
++		# then succeeds although the node points to the wrong major/minor pair.
++		# Recreate such nodes before mkfs accesses the partition.
++		if [ -b "/dev/$partition" ]; then
++			current_major_hex="$(stat -c '%t' "/dev/$partition")"
++			current_minor_hex="$(stat -c '%T' "/dev/$partition")"
++			current_major=$((16#$current_major_hex))
++			current_minor=$((16#$current_minor_hex))
++			if [ "$current_major" -ne "$expected_major" ] || [ "$current_minor" -ne "$expected_minor" ]; then
++				echo "Replacing stale /dev/$partition (${current_major}:${current_minor} -> ${expected_major}:${expected_minor})"
++				rm -f "/dev/$partition"
++			fi
++		fi
+ 		if [ ! -b "/dev/$partition" ]; then
+-			mknod "/dev/$partition" b "${majmin%:*}" "${majmin#*:}"
++			mknod "/dev/$partition" b "$expected_major" "$expected_minor"
+ 		fi
+ 	done
+ 	command -v udevadm >/dev/null 2>&1 || return 0

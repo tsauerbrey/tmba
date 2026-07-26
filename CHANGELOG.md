@@ -7,24 +7,36 @@ dem Schema der semantischen Versionierung.
 
 ## [Unreleased]
 
-## [0.8.2] – 2026-07-26
-
-### Behoben
-
-- benutzerdefinierte `stage-tmba` übernimmt das Root-Dateisystem aus `stage2`
-- Buildabbruch `Unable to chroot/chdir ... stage-tmba/rootfs` behoben
-
-### Tests
-
-- Builder-Test für `prerun.sh` und `copy_previous` ergänzt
-
-
 ### Geplant
 
 - zentrale AudioPipeline
 - CamillaDSP-Anbindung
 - ALSA-Ausgabe
 - HiFiBerry-Hardwareintegration
+
+## [0.8.4] – 2026-07-26
+
+### Fixed
+
+- veraltete Loop-Partitionsknoten werden vor dem pi-gen-Image-Export ersetzt
+- Testskript liest die Releaseversion nun dynamisch aus `VERSION`
+
+### Added
+
+- versionierter pi-gen-Patch mit Commit-Kompatibilitätsprüfung
+- Builder-Tests für Loop-Geräteknoten und dynamische Versionsausgabe
+
+## [0.8.3] – 2026-07-26
+
+### Behoben
+
+- robuster Pfad für `99-tmba-audio.conf` über `${STAGE_DIR}`
+- konsistente Version `0.8.3` in Builder, Runtime-Konfiguration und Image-MOTD
+- unnötiger `sudo`-Aufruf im Chroot durch `runuser` ersetzt
+
+### Tests
+
+- Builder-Prüfungen für Stage-Assets und Versionskonsistenz ergänzt
 
 ## [0.6.0] – 2026-07-25
 
