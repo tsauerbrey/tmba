@@ -1,0 +1,17 @@
+[Unit]
+Description=TMBA Backend
+After=network-online.target sound.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=tmba
+Group=tmba
+WorkingDirectory=/opt/tmba/backend
+Environment=PYTHONPATH=/opt/tmba/backend
+ExecStart=/opt/tmba/backend/.venv/bin/python -m uvicorn tmba.main:app --host 127.0.0.1 --port 8000
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

@@ -1,37 +1,33 @@
-# TMBA v0.7.2-B installieren
+# TMBA v0.7.3-A installieren
 
-Dieses Paket wird über den bestehenden TMBA-Repository-Stand kopiert. Auf dem Mac werden zunächst nur Code, Tests und Deployment-Dateien geprüft. Die privilegierte AirPlay-Installation wird später direkt auf dem Raspberry Pi ausgeführt.
+Dieses Paket ergänzt das Repository um den Developer Image Builder. Es erzeugt noch kein bootfähiges Image und benötigt auf dem Mac keine privilegierten Befehle.
 
-## 1. Paket in das Repository kopieren
+## 1. Paket kopieren
 
 ```bash
 cd ~/Downloads
-unzip -o TMBA-0.7.2-B-AirPlay-Runtime.zip \
-  -d TMBA-0.7.2-B-AirPlay-Runtime
+unzip -o TMBA-0.7.3-A-Developer-Image-Builder.zip \
+  -d TMBA-0.7.3-A-Developer-Image-Builder
 
-cd ~/Downloads/TMBA-0.7.2-B-AirPlay-Runtime
+cd ~/Downloads/TMBA-0.7.3-A-Developer-Image-Builder
 cp -R . ~/Development/tmba/
 ```
 
-## 2. Version und Prüfskript kontrollieren
+## 2. Version kontrollieren
 
 ```bash
 cat ~/Development/tmba/VERSION
-ls -l ~/Development/tmba/scripts/check-airplay-runtime.sh
+ls -l ~/Development/tmba/scripts/check-image-builder.sh
 ```
 
-Erwartete Version:
+Erwartet: `0.7.3-A`.
 
-```text
-0.7.2-B
-```
-
-## 3. Mac-Tests ausführen
+## 3. Prüfung starten
 
 ```bash
-chmod +x ~/Development/tmba/scripts/check-airplay-runtime.sh
+chmod +x ~/Development/tmba/scripts/check-image-builder.sh
 cd ~/Development/tmba
-./scripts/check-airplay-runtime.sh
+./scripts/check-image-builder.sh
 ```
 
 ## 4. GitHub aktualisieren
@@ -39,32 +35,7 @@ cd ~/Development/tmba
 ```bash
 git status
 git add .
-git commit -m "Release v0.7.2-B: AirPlay runtime integration"
+git commit -m "Release v0.7.3-A: Developer Image Builder"
 git push
 git status
 ```
-
-## 5. Später auf dem Raspberry Pi installieren
-
-Das folgende Kommando erst ausführen, wenn das Repository auf dem Raspberry Pi vorhanden ist:
-
-```bash
-cd ~/tmba
-sudo ./scripts/install-airplay-runtime.sh \
-  "TMBA" \
-  "hw:sndrpihifiberry" \
-  "Digital" \
-  "hw:sndrpihifiberry"
-```
-
-Danach prüfen:
-
-```bash
-systemctl status shairport-sync.service --no-pager
-systemctl status avahi-daemon.service --no-pager
-aplay -L
-amixer scontrols
-journalctl -u shairport-sync.service -n 100 --no-pager
-```
-
-Der Verstärker sollte beim ersten Hörtest auf eine niedrige Lautstärke eingestellt sein. Falls `aplay -L` oder `amixer scontrols` andere Namen ausgeben, werden die vier Parameter des Installationsskripts entsprechend angepasst.

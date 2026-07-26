@@ -1,0 +1,4 @@
+alsa-utils
+avahi-daemon
+libasound2
+shairport-sync

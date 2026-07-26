@@ -1,0 +1,6 @@
+bash-completion
+htop
+jq
+less
+nano
+vim-tiny
