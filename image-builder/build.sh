@@ -24,7 +24,13 @@ write_plan() {
     echo "user=$TMBA_DEFAULT_USER"
     echo "ssh=$TMBA_ENABLE_SSH"
     echo "pi_gen_ref=$TMBA_PI_GEN_REF"
-    echo "pi_gen_commit=$TMBA_PI_GEN_COMMIT"
+    if [[ -s "$CACHE_DIR/pi-gen.commit" ]]; then
+      echo "pi_gen_commit=$(cat "$CACHE_DIR/pi-gen.commit")"
+    elif [[ -n "${TMBA_PI_GEN_COMMIT:-}" ]]; then
+      echo "pi_gen_commit=$TMBA_PI_GEN_COMMIT"
+    else
+      echo "pi_gen_commit=pending-prepare"
+    fi
     echo "docker_platform=$TMBA_DOCKER_PLATFORM"
     echo "minimum_free_gib=$TMBA_MIN_FREE_GIB"
     echo
@@ -46,8 +52,8 @@ clean_builder() {
 
 run_build() {
   "$ROOT_DIR/preflight.sh"
-  write_plan
   "$ROOT_DIR/prepare-pigen.sh"
+  write_plan
   local pigen_dir="$CACHE_DIR/pi-gen"
   local log_file="$DIST_DIR/${TMBA_IMAGE_NAME}-${TMBA_IMAGE_VERSION}-build.log"
   local meta_file="$DIST_DIR/${TMBA_IMAGE_NAME}-${TMBA_IMAGE_VERSION}-build-metadata.txt"
@@ -68,7 +74,13 @@ run_build() {
     echo "started_utc=$started"
     echo "finished_utc=$finished"
     echo "exit_status=$status"
-    echo "pi_gen_commit=$TMBA_PI_GEN_COMMIT"
+    if [[ -s "$CACHE_DIR/pi-gen.commit" ]]; then
+      echo "pi_gen_commit=$(cat "$CACHE_DIR/pi-gen.commit")"
+    elif [[ -n "${TMBA_PI_GEN_COMMIT:-}" ]]; then
+      echo "pi_gen_commit=$TMBA_PI_GEN_COMMIT"
+    else
+      echo "pi_gen_commit=pending-prepare"
+    fi
     echo "host_arch=$(uname -m)"
     echo "docker_server_arch=$(docker info --format '{{.Architecture}}')"
   } > "$meta_file"
@@ -85,7 +97,7 @@ run_build() {
 case "$MODE" in
   --dry-run) write_plan ;;
   --preflight) "$ROOT_DIR/preflight.sh" ;;
-  --prepare) write_plan; "$ROOT_DIR/prepare-pigen.sh" ;;
+  --prepare) "$ROOT_DIR/prepare-pigen.sh"; write_plan ;;
   --clean) clean_builder ;;
   --build) run_build ;;
   *) fail "Unbekannter Modus: $MODE (erlaubt: --dry-run, --preflight, --prepare, --clean, --build)" ;;

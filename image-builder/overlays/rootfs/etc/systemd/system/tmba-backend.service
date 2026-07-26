@@ -1,6 +1,6 @@
 [Unit]
 Description=TMBA Backend API
-Documentation=file:/opt/tmba/docs/releases/v0.8.0.md
+Documentation=file:/opt/tmba/docs/releases/v0.8.1.md
 After=network-online.target sound.target tmba-boot-diagnostics.service
 Wants=network-online.target
 Requires=tmba-boot-diagnostics.service

@@ -1,7 +1,7 @@
 project:
   name: TMBA
   full_name: Thoralfs Mobile Beschallungs-Anlage
-  version: 0.8.0
+  version: 0.8.1
   environment: development
 
 device:

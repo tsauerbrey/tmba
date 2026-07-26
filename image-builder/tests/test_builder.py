@@ -27,12 +27,12 @@ def test_builder_validation_succeeds() -> None:
 def test_dry_run_creates_complete_plan() -> None:
     result = run(str(BUILDER / "build.sh"), "--dry-run")
     assert result.returncode == 0, result.stderr
-    plan = BUILDER / "dist/tmba-developer-0.8.0-build-plan.txt"
+    plan = BUILDER / "dist/tmba-developer-0.8.1-build-plan.txt"
     text = plan.read_text()
-    assert "version=0.8.0" in text
-    assert "pi_gen_ref=arm64" in text
+    assert "version=0.8.1" in text
+    assert "pi_gen_ref=2026-06-18-raspios-bookworm-arm64" in text
     assert "docker_platform=linux/arm64" in text
-    assert "pi_gen_commit=ca8aeed0ae300c2a89f55ce9617d5f96a27e99e5" in text
+    assert "pi_gen_commit=" in text
     assert "minimum_free_gib=35" in text
     assert "shairport-sync.service" in text
 
@@ -84,11 +84,14 @@ def test_clean_mode_removes_generated_directories() -> None:
     assert (BUILDER / "dist").is_dir()
 
 
-def test_prepare_uses_pinned_pigen_commit() -> None:
+def test_prepare_uses_bookworm_release_and_commit_lock() -> None:
     env = (BUILDER / "config/image.env").read_text()
     script = (BUILDER / "prepare-pigen.sh").read_text()
-    assert "TMBA_PI_GEN_COMMIT=" in env
-    assert 'checkout --detach "$TMBA_PI_GEN_COMMIT"' in script
+    assert "TMBA_PI_GEN_REF=2026-06-18-raspios-bookworm-arm64" in env
+    assert 'rev-parse "${TMBA_PI_GEN_REF}^{commit}"' in script
+    assert "COMMIT_LOCK" in script
+    assert "actual_commit" in script
+    assert 'docker image rm -f pi-gen:latest' in script
 
 
 def test_build_writes_metadata_and_checksums() -> None:
@@ -130,7 +133,7 @@ def test_backend_listens_on_image_network() -> None:
     assert "ExecStartPre=" in unit
 
 
-def test_release_file_is_v080() -> None:
+def test_release_file_is_v081() -> None:
     finalize = (BUILDER / "pi-gen-stage/05-tmba-finalize/00-run-chroot.sh").read_text()
-    assert "TMBA_IMAGE_VERSION=0.8.0" in finalize
-    assert "TMBA-OS 0.8.0" in finalize
+    assert "TMBA_IMAGE_VERSION=0.8.1" in finalize
+    assert "TMBA-OS 0.8.1" in finalize
