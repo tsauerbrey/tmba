@@ -1,48 +1,52 @@
-# Installation TMBA v0.7.1-A
+# Installation – TMBA v0.7.1-B
 
-## 1. Paket entpacken
+## 1. Entpacken
 
 ```bash
 cd ~/Downloads
 
-unzip -o TMBA-0.7.1-A-AudioSource-API.zip \
-  -d TMBA-0.7.1-A-AudioSource-API
+unzip -o TMBA-0.7.1-B-DummySource-PCM.zip \
+  -d TMBA-0.7.1-B-DummySource-PCM
 ```
 
-Das ZIP enthält direkt `backend/`, `.github/`, `docs/`, `scripts/` und
-`INSTALLATION.md`. Es gibt keine zusätzliche innere Paketebene.
+Das ZIP enthält direkt `backend/`, `docs/`, `scripts/`, `VERSION` und diese Anleitung.
 
-## 2. Dateien in das Repository kopieren
+## 2. In das Repository kopieren
 
 ```bash
-cd ~/Downloads/TMBA-0.7.1-A-AudioSource-API
+cd ~/Downloads/TMBA-0.7.1-B-DummySource-PCM
+
 cp -R . ~/Development/tmba/
 ```
 
-## 3. Prüfskript ausführen
+## 3. Prüfskript kontrollieren und freigeben
 
 ```bash
-chmod +x ~/Development/tmba/scripts/check-audio-source-api.sh
+ls -l ~/Development/tmba/scripts/check-dummy-source.sh
+
+chmod +x ~/Development/tmba/scripts/check-dummy-source.sh
+```
+
+## 4. Tests starten
+
+```bash
 cd ~/Development/tmba
-./scripts/check-audio-source-api.sh
+
+./scripts/check-dummy-source.sh
 ```
 
 Erwartete Abschlussmeldung:
 
 ```text
-TMBA v0.7.1-A erfolgreich geprüft.
+TMBA v0.7.1-B erfolgreich geprüft.
 ```
 
-## 4. GitHub aktualisieren
+## 5. GitHub aktualisieren
 
 ```bash
 git status
 git add .
-git commit -m "Release v0.7.1-A: AudioSource API and backend CI"
+git commit -m "Release v0.7.1-B: DummySource and PCM generator"
 git push
 git status
 ```
-
-Nach dem Push startet GitHub Actions automatisch die Backend-Tests. Nach
-erfolgreichem Abschluss wird zusätzlich ein ZIP-Artefakt des Repository-Stands
-erzeugt.

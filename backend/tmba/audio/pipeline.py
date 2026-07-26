@@ -125,6 +125,12 @@ class AudioPipeline:
             self._state = PipelineState.ERROR
             raise
 
+    def write(self, pcm_data: bytes) -> int:
+        """Forward raw PCM data to the configured output driver."""
+        if self._state is not PipelineState.RUNNING:
+            raise RuntimeError("AudioPipeline wurde noch nicht gestartet.")
+        return self.output_driver.write(pcm_data)
+
     def stop(self) -> None:
         self.output_driver.stop()
         for stage in self._stages:

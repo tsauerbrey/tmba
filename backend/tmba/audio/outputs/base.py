@@ -35,6 +35,11 @@ class OutputDriver(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def write(self, pcm_data: bytes) -> int:
+        """Write one block of raw PCM data and return bytes accepted."""
+        raise NotImplementedError
+
+    @abstractmethod
     def stop(self) -> None:
         raise NotImplementedError
 

@@ -19,6 +19,7 @@ class EngineState(str, Enum):
 
 class EngineSource(str, Enum):
     NONE = "none"
+    DUMMY = "dummy"
     AIRPLAY = "airplay"
     BLUETOOTH = "bluetooth"
     WEBRADIO = "webradio"

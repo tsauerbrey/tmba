@@ -41,6 +41,7 @@ class SourceArbitrator:
 
     DEFAULT_PRIORITIES: Mapping[EngineSource, int] = {
         EngineSource.NONE: 0,
+        EngineSource.DUMMY: 1,
         EngineSource.WEBRADIO: 10,
         EngineSource.BLUETOOTH: 20,
         EngineSource.AIRPLAY: 30,

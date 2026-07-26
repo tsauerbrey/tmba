@@ -176,6 +176,7 @@ def test_engine_status_exposes_source_priorities():
     assert status["source_priority"] == 0
     assert status["source_priorities"] == {
         "none": 0,
+        "dummy": 1,
         "airplay": 30,
         "bluetooth": 20,
         "webradio": 10,
