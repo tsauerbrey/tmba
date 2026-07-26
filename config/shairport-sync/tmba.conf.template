@@ -1,0 +1,20 @@
+// TMBA shairport-sync configuration template.
+// The installer replaces the values supplied on its command line.
+general =
+{
+    name = "__TMBA_RECEIVER_NAME__";
+    output_backend = "alsa";
+    volume_control_profile = "standard";
+};
+
+alsa =
+{
+    output_device = "__TMBA_ALSA_DEVICE__";
+    mixer_control_name = "__TMBA_MIXER_CONTROL__";
+    mixer_device = "__TMBA_MIXER_DEVICE__";
+};
+
+metadata =
+{
+    enabled = "yes";
+};

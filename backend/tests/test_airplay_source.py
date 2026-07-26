@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from tmba.audio.engine_state import EngineSource
+from tmba.audio.sources.airplay_runtime import AirPlayRuntimeReport
 from tmba.audio.sources.airplay_source import AirPlaySource
 from tmba.audio.sources.base import SourceLifecycleState
 from tmba.audio.sources.service_process import ServiceRuntimeState, ServiceSnapshot
@@ -15,8 +16,29 @@ class AirPlayController:
     def restart(self, name): self.running = True; return self.inspect(name)
 
 
+class ReadyRuntimeInspector:
+    def inspect(self, config):
+        return AirPlayRuntimeReport(
+            ready=True,
+            binary_found=True,
+            config_found=True,
+            service_available=True,
+            avahi_active=True,
+            alsa_device_found=True,
+            binary_path="/usr/bin/shairport-sync",
+            config_path=config.config_path,
+        )
+
+
+def build_source():
+    return AirPlaySource(
+        controller=AirPlayController(),
+        runtime_inspector=ReadyRuntimeInspector(),
+    )
+
+
 def test_airplay_adapter_has_stable_identity_and_capabilities():
-    source = AirPlaySource(controller=AirPlayController())
+    source = build_source()
     assert source.source is EngineSource.AIRPLAY
     assert source.name == "AirPlay"
     assert source.service_name == "shairport-sync.service"
@@ -25,10 +47,39 @@ def test_airplay_adapter_has_stable_identity_and_capabilities():
 
 
 def test_airplay_adapter_starts_and_stops_shairport_service():
-    source = AirPlaySource(controller=AirPlayController())
+    source = build_source()
     started = source.start()
     assert started.state is SourceLifecycleState.READY
     assert started.active is True
     stopped = source.stop()
     assert stopped.active is False
     assert stopped.connected is True
+
+
+def test_airplay_status_contains_runtime_readiness():
+    status = build_source().status().to_dict()
+    assert status["details"]["runtime"]["ready"] is True
+    assert status["details"]["runtime"]["binary_path"] == "/usr/bin/shairport-sync"
+
+class MissingRuntimeInspector:
+    def inspect(self, config):
+        return AirPlayRuntimeReport(
+            ready=False,
+            binary_found=False,
+            config_found=False,
+            service_available=False,
+            avahi_active=False,
+            alsa_device_found=False,
+            error="Nicht bereit: shairport-sync",
+        )
+
+
+def test_airplay_start_is_blocked_when_runtime_is_not_ready():
+    source = AirPlaySource(
+        controller=AirPlayController(),
+        runtime_inspector=MissingRuntimeInspector(),
+    )
+    status = source.start()
+    assert status.state is SourceLifecycleState.ERROR
+    assert status.active is False
+    assert "shairport-sync" in status.error
