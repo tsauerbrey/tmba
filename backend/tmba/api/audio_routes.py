@@ -3,6 +3,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
+from tmba.audio.engine import audio_engine
 from tmba.audio.manager import audio_manager
 
 router = APIRouter(prefix="/audio", tags=["Audio"])
@@ -13,6 +14,10 @@ class AudioSourceRequest(BaseModel):
 
 class AudioVolumeRequest(BaseModel):
     volume: int = Field(ge=0, le=100)
+
+class EngineSourceRequest(BaseModel):
+    source: str = Field(min_length=1, max_length=32)
+    force: bool = False
 
 @router.get("/status")
 def get_audio_status():
@@ -77,3 +82,32 @@ def _transport_response(result: dict):
     if not result.get("success", False):
         raise HTTPException(status_code=409, detail=result)
     return result
+
+@router.get("/engine")
+def get_audio_engine_status():
+    return audio_engine.status()
+
+@router.post("/engine/start")
+def start_audio_engine():
+    return _engine_response(audio_engine.start())
+
+@router.post("/engine/stop")
+def stop_audio_engine():
+    return _engine_response(audio_engine.stop())
+
+@router.post("/engine/source")
+def select_audio_engine_source(request: EngineSourceRequest):
+    try:
+        result = audio_engine.activate_source(
+            request.source,
+            force=request.force,
+        )
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error
+    return _engine_response(result)
+
+def _engine_response(result: dict):
+    if not result.get("success", False):
+        raise HTTPException(status_code=409, detail=result)
+    return result
+

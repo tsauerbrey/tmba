@@ -1,52 +1,42 @@
-# Installation TMBA v0.6.2-B
+# TMBA v0.7.0-B – Installation
 
-## 1. Paket installieren
+## 1. Paket entpacken
 
 ```bash
 cd ~/Downloads
+unzip -o TMBA-0.7.0-B-Source-Arbitration.zip \
+  -d TMBA-0.7.0-B-Source-Arbitration
+```
 
-unzip -o TMBA-0.6.2-B-ALSA-PCM-Streaming.zip \
-  -d TMBA-0.6.2-B-ALSA-PCM-Streaming
+## 2. Dateien in das Repository kopieren
 
-cd ~/Downloads/TMBA-0.6.2-B-ALSA-PCM-Streaming
+Das ZIP enthält **keine zusätzliche Paket-Unterebene**. Direkt kopieren:
+
+```bash
+cd ~/Downloads/TMBA-0.7.0-B-Source-Arbitration
 cp -R . ~/Development/tmba/
 ```
 
-## 2. Prüfskript ausführbar machen
+## 3. Prüfskript ausführen
 
 ```bash
-chmod +x \
-  ~/Development/tmba/scripts/check-alsa-pcm-streaming.sh
-```
-
-## 3. Tests ausführen
-
-```bash
+chmod +x ~/Development/tmba/scripts/check-source-arbitration.sh
 cd ~/Development/tmba
-./scripts/check-alsa-pcm-streaming.sh
+./scripts/check-source-arbitration.sh
 ```
 
 Erwartete Abschlussmeldung:
 
 ```text
-TMBA v0.6.2-B erfolgreich geprüft.
+TMBA v0.7.0-B erfolgreich geprüft.
 ```
 
-## 4. Commit und Push
+## 4. GitHub aktualisieren
 
 ```bash
+git status
 git add .
-git commit -m "Add ALSA PCM streaming output"
+git commit -m "Release v0.7.0-B: source arbitration"
 git push
+git status
 ```
-
-## Raspberry-Pi-Hinweis
-
-Auf dem späteren Zielsystem muss `aplay` vorhanden sein:
-
-```bash
-sudo apt install alsa-utils
-```
-
-Die Hardwareprüfung auf dem Raspberry Pi erfolgt separat, nachdem dieses
-Paket lokal und in GitHub erfolgreich getestet wurde.

@@ -51,5 +51,6 @@ def root():
         "network_status": "/network/status",
         "audio_status": "/audio/status",
         "audio_pipeline": "/audio/pipeline",
+        "audio_engine": "/audio/engine",
         "docs": "/docs",
     }
