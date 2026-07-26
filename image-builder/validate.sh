@@ -23,6 +23,11 @@ require_file "$ROOT_DIR/pi-gen-stage/03-tmba-hardware/00-run.sh"
 require_file "$ROOT_DIR/pi-gen-stage/04-tmba-services/00-run-chroot.sh"
 require_file "$ROOT_DIR/pi-gen-stage/05-tmba-finalize/00-run-chroot.sh"
 require_file "$ROOT_DIR/overlays/rootfs/etc/systemd/system/tmba-backend.service"
+require_file "$ROOT_DIR/overlays/rootfs/etc/systemd/system/tmba-boot-diagnostics.service"
+require_file "$ROOT_DIR/overlays/rootfs/etc/systemd/system/tmba-healthcheck.service"
+require_file "$ROOT_DIR/overlays/rootfs/etc/default/tmba-backend"
+require_file "$ROOT_DIR/overlays/rootfs/usr/local/lib/tmba/tmba-boot-diagnostics"
+require_file "$ROOT_DIR/overlays/rootfs/usr/local/lib/tmba/tmba-healthcheck"
 
 for stage in 00-base 10-audio 20-network 30-tmba 40-finalize; do
   require_dir "$ROOT_DIR/stages/$stage"
@@ -56,11 +61,14 @@ for script in \
   "$ROOT_DIR/pi-gen-stage/02-tmba-install/00-run-chroot.sh" \
   "$ROOT_DIR/pi-gen-stage/03-tmba-hardware/00-run.sh" \
   "$ROOT_DIR/pi-gen-stage/04-tmba-services/00-run-chroot.sh" \
-  "$ROOT_DIR/pi-gen-stage/05-tmba-finalize/00-run-chroot.sh"; do
+  "$ROOT_DIR/pi-gen-stage/05-tmba-finalize/00-run-chroot.sh"   "$ROOT_DIR/overlays/rootfs/usr/local/lib/tmba/tmba-boot-diagnostics"   "$ROOT_DIR/overlays/rootfs/usr/local/lib/tmba/tmba-healthcheck"; do
   bash -n "$script"
 done
 
 grep -q '^dtoverlay=hifiberry-dacplus$' "$ROOT_DIR/pi-gen-stage/03-tmba-hardware/00-run.sh" || fail "HiFiBerry-Overlay fehlt"
+grep -q '/opt/tmba/config' "$ROOT_DIR/pi-gen-stage/02-tmba-install/00-run-chroot.sh" || fail "Runtime-Konfiguration wird nicht installiert"
+grep -q 'tmba-boot-diagnostics.service' "$ROOT_DIR/pi-gen-stage/04-tmba-services/00-run-chroot.sh" || fail "Bootdiagnose-Service wird nicht aktiviert"
+grep -q 'tmba-healthcheck.service' "$ROOT_DIR/pi-gen-stage/04-tmba-services/00-run-chroot.sh" || fail "Healthcheck-Service wird nicht aktiviert"
 grep -q "STAGE_LIST='stage0 stage1 stage2 stage-tmba'" "$ROOT_DIR/prepare-pigen.sh" || fail "pi-gen Stage-Liste fehlt"
 
 echo "TMBA Image Builder-Konfiguration ist gültig."

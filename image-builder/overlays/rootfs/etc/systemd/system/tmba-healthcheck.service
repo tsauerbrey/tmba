@@ -1,0 +1,11 @@
+[Unit]
+Description=TMBA backend startup health check
+After=tmba-backend.service
+Requires=tmba-backend.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/lib/tmba/tmba-healthcheck
+
+[Install]
+WantedBy=multi-user.target

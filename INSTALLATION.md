@@ -1,3 +1,40 @@
+# TMBA Installation
+
+## v0.8.0 – Erstes bootfähiges TMBA-OS
+
+### Lokale Prüfung
+
+```bash
+cd ~/Development/tmba
+./scripts/check-image-builder.sh
+./image-builder/build.sh --preflight
+./image-builder/build.sh --prepare
+```
+
+### Vollständiges Image bauen
+
+```bash
+./image-builder/build.sh --build
+```
+
+Das Image, das Buildprotokoll, die Metadaten und die SHA-256-Prüfsummen werden unter `image-builder/dist/` abgelegt.
+
+### Erster Start auf dem Raspberry Pi
+
+```bash
+ssh tmba@tmba.local
+cat /etc/tmba-image-release
+systemctl status tmba-backend --no-pager
+systemctl status tmba-healthcheck --no-pager
+curl http://127.0.0.1:8000/system/health
+cat /var/log/tmba/boot.log
+aplay -l
+```
+
+Das vorläufige Developer-Passwort ist `tmba`.
+
+---
+
 # TMBA v0.7.3-B – Installation und Prüfung
 
 ## Dateien in das Repository kopieren

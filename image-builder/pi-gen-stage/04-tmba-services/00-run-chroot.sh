@@ -2,4 +2,6 @@
 systemctl enable ssh.service
 systemctl enable avahi-daemon.service
 systemctl enable shairport-sync.service
+systemctl enable tmba-boot-diagnostics.service
 systemctl enable tmba-backend.service
+systemctl enable tmba-healthcheck.service

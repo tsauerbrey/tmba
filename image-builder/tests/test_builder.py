@@ -27,9 +27,9 @@ def test_builder_validation_succeeds() -> None:
 def test_dry_run_creates_complete_plan() -> None:
     result = run(str(BUILDER / "build.sh"), "--dry-run")
     assert result.returncode == 0, result.stderr
-    plan = BUILDER / "dist/tmba-developer-0.7.3-C-build-plan.txt"
+    plan = BUILDER / "dist/tmba-developer-0.8.0-build-plan.txt"
     text = plan.read_text()
-    assert "version=0.7.3-C" in text
+    assert "version=0.8.0" in text
     assert "pi_gen_ref=arm64" in text
     assert "docker_platform=linux/arm64" in text
     assert "pi_gen_commit=ca8aeed0ae300c2a89f55ce9617d5f96a27e99e5" in text
@@ -96,3 +96,41 @@ def test_build_writes_metadata_and_checksums() -> None:
     assert "build-metadata.txt" in script
     assert "SHA256SUMS" in script
     assert "PIPESTATUS[0]" in script
+
+
+def test_runtime_configuration_is_installed() -> None:
+    install = (BUILDER / "pi-gen-stage/02-tmba-install/00-run-chroot.sh").read_text()
+    assert "source/config" in install
+    assert "/opt/tmba/config" in install
+    assert "get_settings" in install
+
+
+def test_boot_diagnostics_service_is_enabled() -> None:
+    service = (BUILDER / "overlays/rootfs/etc/systemd/system/tmba-boot-diagnostics.service").read_text()
+    script = BUILDER / "overlays/rootfs/usr/local/lib/tmba/tmba-boot-diagnostics"
+    enable = (BUILDER / "pi-gen-stage/04-tmba-services/00-run-chroot.sh").read_text()
+    assert "Before=tmba-backend.service" in service
+    assert script.is_file()
+    assert "tmba-boot-diagnostics.service" in enable
+
+
+def test_backend_has_startup_healthcheck() -> None:
+    service = (BUILDER / "overlays/rootfs/etc/systemd/system/tmba-healthcheck.service").read_text()
+    script = (BUILDER / "overlays/rootfs/usr/local/lib/tmba/tmba-healthcheck").read_text()
+    assert "After=tmba-backend.service" in service
+    assert "/system/health" in script
+    assert "seq 1 30" in script
+
+
+def test_backend_listens_on_image_network() -> None:
+    env = (BUILDER / "overlays/rootfs/etc/default/tmba-backend").read_text()
+    unit = (BUILDER / "overlays/rootfs/etc/systemd/system/tmba-backend.service").read_text()
+    assert "TMBA_BACKEND_HOST=0.0.0.0" in env
+    assert "EnvironmentFile=-/etc/default/tmba-backend" in unit
+    assert "ExecStartPre=" in unit
+
+
+def test_release_file_is_v080() -> None:
+    finalize = (BUILDER / "pi-gen-stage/05-tmba-finalize/00-run-chroot.sh").read_text()
+    assert "TMBA_IMAGE_VERSION=0.8.0" in finalize
+    assert "TMBA-OS 0.8.0" in finalize

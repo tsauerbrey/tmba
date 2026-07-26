@@ -1,0 +1,20 @@
+#!/bin/bash
+set -u
+HOST="${TMBA_BACKEND_HOST:-127.0.0.1}"
+PORT="${TMBA_BACKEND_PORT:-8000}"
+[[ "$HOST" == "0.0.0.0" ]] && HOST=127.0.0.1
+URL="http://${HOST}:${PORT}/system/health"
+LOG=/var/log/tmba/healthcheck.log
+install -d -m 0755 -o tmba -g tmba /var/log/tmba
+
+for attempt in $(seq 1 30); do
+  if response="$(curl --fail --silent --show-error --max-time 2 "$URL" 2>&1)"; then
+    printf '[%s] OK attempt=%s url=%s response=%s\n' "$(date --iso-8601=seconds)" "$attempt" "$URL" "$response" | tee -a "$LOG"
+    exit 0
+  fi
+  printf '[%s] WAIT attempt=%s url=%s error=%s\n' "$(date --iso-8601=seconds)" "$attempt" "$URL" "$response" >> "$LOG"
+  sleep 2
+done
+
+printf '[%s] FAILED url=%s\n' "$(date --iso-8601=seconds)" "$URL" | tee -a "$LOG" >&2
+exit 1

@@ -1,4 +1,6 @@
 ssh.service
 avahi-daemon.service
 shairport-sync.service
+tmba-boot-diagnostics.service
 tmba-backend.service
+tmba-healthcheck.service

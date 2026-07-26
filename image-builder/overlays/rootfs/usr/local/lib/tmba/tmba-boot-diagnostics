@@ -1,0 +1,59 @@
+#!/bin/bash
+set -u
+LOG_DIR=/var/log/tmba
+LOG_FILE="$LOG_DIR/boot.log"
+install -d -m 0755 -o tmba -g tmba "$LOG_DIR"
+exec > >(tee -a "$LOG_FILE") 2>&1
+
+section() { printf '\n[%s] %s\n' "$(date --iso-8601=seconds)" "$1"; }
+command_line() { printf '$ %s\n' "$*"; "$@" 2>&1 || true; }
+
+section "TMBA boot diagnostics"
+echo "image_release=$(tr '\n' ' ' < /etc/tmba-image-release 2>/dev/null || echo unknown)"
+echo "hostname=$(hostname)"
+echo "boot_id=$(cat /proc/sys/kernel/random/boot_id 2>/dev/null || echo unknown)"
+
+section "Operating system"
+command_line uname -a
+command_line cat /etc/os-release
+
+section "Raspberry Pi hardware"
+if [[ -r /proc/device-tree/model ]]; then
+  tr -d '\0' < /proc/device-tree/model; echo
+else
+  echo "model=not available"
+fi
+command_line lscpu
+command_line free -h
+
+section "Audio"
+command_line lsmod
+command_line aplay -l
+command_line aplay -L
+command_line amixer scontrols
+if grep -Eq 'snd[_-]soc[_-]hifiberry|hifiberry' /proc/asound/cards 2>/dev/null; then
+  echo "hifiberry=detected"
+else
+  echo "hifiberry=not detected"
+fi
+
+section "Display and input"
+command_line ls -l /dev/dri /dev/fb0 /dev/input
+for node in /sys/class/drm/*/status; do
+  [[ -e "$node" ]] && echo "${node}: $(cat "$node")"
+done
+
+section "Network"
+command_line ip -brief link
+command_line ip -brief address
+command_line rfkill list
+
+section "Bluetooth"
+command_line bluetoothctl show
+
+section "TMBA installation"
+command_line ls -ld /opt/tmba /opt/tmba/backend /opt/tmba/config
+command_line /opt/tmba/backend/.venv/bin/python --version
+command_line /opt/tmba/backend/.venv/bin/python -c 'from tmba.core.config import get_settings; s=get_settings(); print(s.system.project.full_name, s.system.project.version)'
+
+section "Diagnostics completed"

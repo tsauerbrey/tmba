@@ -1,46 +1,35 @@
-# TMBA Developer Image Builder
+# TMBA Image Builder
 
-Der Builder erzeugt ein Raspberry-Pi-OS-Lite-Image für den Raspberry Pi 4 (ARM64). Das offizielle `pi-gen` wird als externe, auf einen exakten Commit festgelegte Build-Abhängigkeit im lokalen Cache verwendet. Die TMBA-Anpassungen bleiben vollständig in `pi-gen-stage/` und im Repository versioniert.
+Der Builder erzeugt das erste bootfähige TMBA-OS auf Basis von Raspberry Pi OS Lite Bookworm und dem festgelegten ARM64-Stand von `pi-gen`.
 
 ## Befehle
 
 ```bash
-./image-builder/build.sh --dry-run
 ./image-builder/build.sh --preflight
 ./image-builder/build.sh --prepare
-./image-builder/build.sh --clean
+./image-builder/build.sh --dry-run
 ./image-builder/build.sh --build
+./image-builder/build.sh --clean
 ```
 
-- `--dry-run`: validiert und erzeugt den Buildplan.
-- `--preflight`: prüft Docker, ARM64, CPU, RAM, Werkzeuge und freien Speicher.
-- `--prepare`: lädt `pi-gen` und checkt den festgelegten Commit aus.
-- `--clean`: entfernt nur Builder-Cache und Buildartefakte.
-- `--build`: führt Preflight, Vorbereitung und vollständigen Docker-Build aus.
+## Ergebnis
 
-## Mindestanforderungen
+Image, Buildprotokoll, Metadaten und `SHA256SUMS` liegen unter `image-builder/dist/`.
 
-- Docker Engine oder OrbStack
-- ARM64-Docker-Server
-- mindestens 4 Docker-CPUs
-- mindestens 8 GiB Docker-RAM
-- mindestens 35 GiB freier Speicher
-- Git, rsync und Standard-Unix-Werkzeuge
-- Projektpfad ohne Leerzeichen
+## Runtime im Image
 
-## Reproduzierbarkeit
+- `/opt/tmba/backend`
+- `/opt/tmba/backend/.venv`
+- `/opt/tmba/config`
+- `/etc/default/tmba-backend`
+- `/etc/tmba-image-release`
+- `/var/log/tmba/boot.log`
+- `/var/log/tmba/healthcheck.log`
 
-`config/image.env` enthält sowohl den Branch als auch den exakten `pi-gen`-Commit. `prepare-pigen.sh` checkt diesen Commit im Detached-HEAD-Modus aus. Ein späterer Stand des Remote-Branches verändert dadurch keinen bereits definierten TMBA-Build.
-
-## Ausgaben
+## Dienste
 
 ```text
-image-builder/dist/
-├── tmba-developer-0.7.3-C-build-plan.txt
-├── tmba-developer-0.7.3-C-build.log
-├── tmba-developer-0.7.3-C-build-metadata.txt
-├── *.img.xz
-└── SHA256SUMS
+tmba-boot-diagnostics.service -> tmba-backend.service -> tmba-healthcheck.service
 ```
 
-Das Developer Image verwendet vorläufig den Benutzer `tmba` mit dem Passwort `tmba`. Dieses Passwort ist nur für lokale Entwicklungstests vorgesehen.
+Der Backend-Endpunkt ist nach dem Boot unter `http://tmba.local:8000/` erreichbar.
