@@ -1,34 +1,36 @@
-# TMBA v0.7.0-B – Installation
+# Installation TMBA v0.7.1-A
 
 ## 1. Paket entpacken
 
 ```bash
 cd ~/Downloads
-unzip -o TMBA-0.7.0-B-Source-Arbitration.zip \
-  -d TMBA-0.7.0-B-Source-Arbitration
+
+unzip -o TMBA-0.7.1-A-AudioSource-API.zip \
+  -d TMBA-0.7.1-A-AudioSource-API
 ```
+
+Das ZIP enthält direkt `backend/`, `.github/`, `docs/`, `scripts/` und
+`INSTALLATION.md`. Es gibt keine zusätzliche innere Paketebene.
 
 ## 2. Dateien in das Repository kopieren
 
-Das ZIP enthält **keine zusätzliche Paket-Unterebene**. Direkt kopieren:
-
 ```bash
-cd ~/Downloads/TMBA-0.7.0-B-Source-Arbitration
+cd ~/Downloads/TMBA-0.7.1-A-AudioSource-API
 cp -R . ~/Development/tmba/
 ```
 
 ## 3. Prüfskript ausführen
 
 ```bash
-chmod +x ~/Development/tmba/scripts/check-source-arbitration.sh
+chmod +x ~/Development/tmba/scripts/check-audio-source-api.sh
 cd ~/Development/tmba
-./scripts/check-source-arbitration.sh
+./scripts/check-audio-source-api.sh
 ```
 
 Erwartete Abschlussmeldung:
 
 ```text
-TMBA v0.7.0-B erfolgreich geprüft.
+TMBA v0.7.1-A erfolgreich geprüft.
 ```
 
 ## 4. GitHub aktualisieren
@@ -36,7 +38,11 @@ TMBA v0.7.0-B erfolgreich geprüft.
 ```bash
 git status
 git add .
-git commit -m "Release v0.7.0-B: source arbitration"
+git commit -m "Release v0.7.1-A: AudioSource API and backend CI"
 git push
 git status
 ```
+
+Nach dem Push startet GitHub Actions automatisch die Backend-Tests. Nach
+erfolgreichem Abschluss wird zusätzlich ein ZIP-Artefakt des Repository-Stands
+erzeugt.
