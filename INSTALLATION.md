@@ -1,68 +1,55 @@
-# Installation TMBA v0.6.1-B
+# Installation TMBA v0.6.1-C
 
-## 1. Aktuellen Stand prüfen
-
-```bash
-cd ~/Development/tmba
-git status
-git pull
-```
-
-Der Arbeitsbaum sollte sauber sein und v0.6.1-A enthalten.
-
-## 2. Paket entpacken
+## 1. ZIP entpacken und kopieren
 
 ```bash
 cd ~/Downloads
-unzip -o TMBA-0.6.1-B-AudioManager-Integration.zip \
-  -d TMBA-0.6.1-B-AudioManager-Integration
-```
-
-## 3. Dateien kopieren
-
-```bash
-cd ~/Downloads/TMBA-0.6.1-B-AudioManager-Integration
+unzip -o TMBA-0.6.1-C-Pipeline-REST-API.zip -d TMBA-0.6.1-C-Pipeline-REST-API
+cd ~/Downloads/TMBA-0.6.1-C-Pipeline-REST-API
 cp -R . ~/Development/tmba/
 ```
 
-Dabei wird diese bestehende Datei vollständig ersetzt:
-
-```text
-backend/tmba/audio/manager.py
-```
-
-Die übrigen Dateien werden neu hinzugefügt.
-
-## 4. Prüfskript ausführbar machen
+## 2. Skripte ausführbar machen
 
 ```bash
-chmod +x \
-  ~/Development/tmba/scripts/check-audio-manager-pipeline.sh
+chmod +x ~/Development/tmba/scripts/check-audio-pipeline-api.sh
+chmod +x ~/Development/tmba/scripts/move-default-source-registration.py
 ```
 
-## 5. Änderungen prüfen
+## 3. Import-time-Registrierung entfernen
 
 ```bash
 cd ~/Development/tmba
-git diff -- backend/tmba/audio/manager.py
-git status
+python3 scripts/move-default-source-registration.py
 ```
 
-## 6. Tests ausführen
+## 4. Tests
 
 ```bash
-./scripts/check-audio-manager-pipeline.sh
+./scripts/check-audio-pipeline-api.sh
 ```
 
-Die genaue Testzahl kann durch weitere Tests im Repository variieren.
-Entscheidend ist, dass alle drei Prüfschritte erfolgreich beendet werden.
+## 5. Optional manuell testen
 
-## 7. Commit und Push
+Terminal 1:
 
 ```bash
+cd ~/Development/tmba/backend
+source .venv/bin/activate
+PYTHONPATH=. uvicorn tmba.main:app --reload
+```
+
+Terminal 2:
+
+```bash
+curl -s http://127.0.0.1:8000/audio/pipeline | python3 -m json.tool
+```
+
+## 6. Commit
+
+```bash
+cd ~/Development/tmba
 git add .
-git commit -m "Integrate AudioPipeline with AudioManager"
+git commit -m "Expose AudioPipeline status through REST API"
 git push
 ```
-
-Danach müssen Backend-Tests und Frontend-Build in GitHub Actions grün sein.

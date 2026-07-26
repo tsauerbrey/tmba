@@ -706,5 +706,3 @@ def register_default_sources() -> None:
     audio_manager.register_source("bluetooth", bluetooth_service)
     audio_manager.register_source("webradio", webradio_service)
 
-
-register_default_sources()
