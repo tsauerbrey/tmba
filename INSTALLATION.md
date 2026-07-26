@@ -1,15 +1,14 @@
-# Installation TMBA v0.6.2-A1
+# Installation TMBA v0.6.2-B
 
-## 1. Paket entpacken und kopieren
+## 1. Paket installieren
 
 ```bash
 cd ~/Downloads
 
-unzip -o TMBA-0.6.2-A1-ALSA-Parser-Hotfix.zip \
-  -d TMBA-0.6.2-A1-ALSA-Parser-Hotfix
+unzip -o TMBA-0.6.2-B-ALSA-PCM-Streaming.zip \
+  -d TMBA-0.6.2-B-ALSA-PCM-Streaming
 
-cd ~/Downloads/TMBA-0.6.2-A1-ALSA-Parser-Hotfix
-
+cd ~/Downloads/TMBA-0.6.2-B-ALSA-PCM-Streaming
 cp -R . ~/Development/tmba/
 ```
 
@@ -17,32 +16,37 @@ cp -R . ~/Development/tmba/
 
 ```bash
 chmod +x \
-  ~/Development/tmba/scripts/check-alsa-parser-hotfix.sh
+  ~/Development/tmba/scripts/check-alsa-pcm-streaming.sh
 ```
 
-## 3. Hotfix testen
+## 3. Tests ausführen
 
 ```bash
 cd ~/Development/tmba
-
-./scripts/check-alsa-parser-hotfix.sh
+./scripts/check-alsa-pcm-streaming.sh
 ```
 
 Erwartete Abschlussmeldung:
 
 ```text
-TMBA v0.6.2-A1 erfolgreich geprüft.
+TMBA v0.6.2-B erfolgreich geprüft.
 ```
 
 ## 4. Commit und Push
 
-Wenn alle Tests grün sind:
-
 ```bash
 git add .
-git commit -m "Fix ALSA device list parser"
+git commit -m "Add ALSA PCM streaming output"
 git push
 ```
 
-Der ursprüngliche Commit für v0.6.2-A kann zusammen mit diesem Hotfix bestehen
-bleiben. Ein Zurücksetzen ist nicht notwendig.
+## Raspberry-Pi-Hinweis
+
+Auf dem späteren Zielsystem muss `aplay` vorhanden sein:
+
+```bash
+sudo apt install alsa-utils
+```
+
+Die Hardwareprüfung auf dem Raspberry Pi erfolgt separat, nachdem dieses
+Paket lokal und in GitHub erfolgreich getestet wurde.
