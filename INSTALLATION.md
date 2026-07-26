@@ -1,41 +1,49 @@
-# TMBA v0.7.3-A installieren
+# TMBA v0.7.3-B – Installation und Prüfung
 
-Dieses Paket ergänzt das Repository um den Developer Image Builder. Es erzeugt noch kein bootfähiges Image und benötigt auf dem Mac keine privilegierten Befehle.
+## Dateien in das Repository kopieren
 
-## 1. Paket kopieren
+Den Inhalt des Release-Archivs direkt nach `~/Development/tmba/` kopieren.
 
-```bash
-cd ~/Downloads
-unzip -o TMBA-0.7.3-A-Developer-Image-Builder.zip \
-  -d TMBA-0.7.3-A-Developer-Image-Builder
-
-cd ~/Downloads/TMBA-0.7.3-A-Developer-Image-Builder
-cp -R . ~/Development/tmba/
-```
-
-## 2. Version kontrollieren
+## Lokale Prüfung
 
 ```bash
-cat ~/Development/tmba/VERSION
-ls -l ~/Development/tmba/scripts/check-image-builder.sh
-```
-
-Erwartet: `0.7.3-A`.
-
-## 3. Prüfung starten
-
-```bash
-chmod +x ~/Development/tmba/scripts/check-image-builder.sh
 cd ~/Development/tmba
+chmod +x image-builder/build.sh image-builder/prepare-pigen.sh image-builder/validate.sh scripts/check-image-builder.sh
 ./scripts/check-image-builder.sh
 ```
 
-## 4. GitHub aktualisieren
+## pi-gen vorbereiten
 
 ```bash
-git status
-git add .
-git commit -m "Release v0.7.3-A: Developer Image Builder"
-git push
-git status
+./image-builder/build.sh --prepare
 ```
+
+Dabei wird `pi-gen` nach `image-builder/cache/pi-gen` geladen und eine TMBA-spezifische Konfiguration erzeugt. Es entsteht noch kein Image.
+
+## Echtes Image bauen
+
+Docker muss laufen. Außerdem sollten mindestens 35 GB freier Speicher verfügbar sein.
+
+```bash
+./image-builder/build.sh --build
+```
+
+Die Ausgabe liegt anschließend unter `image-builder/dist/`. Der Build kann je nach Internetverbindung und Rechner deutlich länger dauern.
+
+## Sicherheit
+
+Der Benutzer `tmba` erhält im Developer Image vorläufig das Passwort `tmba`. Nach dem ersten SSH-Login sofort ändern:
+
+```bash
+passwd
+```
+
+## v0.7.3-C – Image-Builder-Prüfung
+
+```bash
+./scripts/check-image-builder.sh
+./image-builder/build.sh --preflight
+./image-builder/build.sh --prepare
+```
+
+Erst wenn der Preflight erfolgreich ist, wird der vollständige Build mit `./image-builder/build.sh --build` gestartet. Cache und Artefakte lassen sich mit `./image-builder/build.sh --clean` entfernen.

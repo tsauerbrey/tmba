@@ -1,0 +1,14 @@
+alsa-utils
+avahi-daemon
+ca-certificates
+curl
+git
+jq
+libasound2
+openssh-server
+python3
+python3-pip
+python3-venv
+rsync
+shairport-sync
+sudo

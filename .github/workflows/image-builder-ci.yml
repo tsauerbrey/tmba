@@ -29,3 +29,8 @@ jobs:
         run: python -m pytest -q image-builder/tests
       - name: Buildplan erzeugen
         run: ./image-builder/build.sh --dry-run
+      - name: Buildplan als Artefakt speichern
+        uses: actions/upload-artifact@v4
+        with:
+          name: tmba-image-build-plan
+          path: image-builder/dist/*-build-plan.txt

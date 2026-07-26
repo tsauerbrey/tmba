@@ -1,5 +1,2 @@
-dist/
-work/
 cache/
-*.img
-*.img.xz
+dist/
