@@ -1,85 +1,48 @@
-# Installation TMBA v0.6.1-D
+# Installation TMBA v0.6.2-A1
 
-## Ziel
-
-Dieser Teilmeilenstein verändert keine Produktionslogik. Er ergänzt
-Vertragstests, API-Dokumentation, einen OpenAPI-Export und die abschließende
-Release-Prüfung für TMBA v0.6.1.
-
-## 1. Vorbedingungen
-
-TMBA v0.6.1-C muss installiert und committed sein.
-
-```bash
-cd ~/Development/tmba
-git status
-git pull
-```
-
-## 2. Paket entpacken
+## 1. Paket entpacken und kopieren
 
 ```bash
 cd ~/Downloads
 
-unzip -o TMBA-0.6.1-D-Release-Hardening.zip \
-  -d TMBA-0.6.1-D-Release-Hardening
+unzip -o TMBA-0.6.2-A1-ALSA-Parser-Hotfix.zip \
+  -d TMBA-0.6.2-A1-ALSA-Parser-Hotfix
 
-cd ~/Downloads/TMBA-0.6.1-D-Release-Hardening
+cd ~/Downloads/TMBA-0.6.2-A1-ALSA-Parser-Hotfix
 
 cp -R . ~/Development/tmba/
 ```
 
-## 3. Skripte ausführbar machen
+## 2. Prüfskript ausführbar machen
 
 ```bash
 chmod +x \
-  ~/Development/tmba/scripts/check-release-0.6.1.sh
-
-chmod +x \
-  ~/Development/tmba/scripts/export-openapi.py
+  ~/Development/tmba/scripts/check-alsa-parser-hotfix.sh
 ```
 
-## 4. Änderungen prüfen
-
-```bash
-cd ~/Development/tmba
-git status
-```
-
-## 5. Release-Abschlussprüfung
-
-```bash
-./scripts/check-release-0.6.1.sh
-```
-
-Das Skript:
-
-1. führt die neuen Vertragstests aus,
-2. prüft alle AudioManager-, Pipeline- und API-Tests,
-3. führt die vollständige Backend-Testsuite aus,
-4. exportiert `docs/api/openapi.json`,
-5. validiert das exportierte JSON,
-6. prüft, ob `/audio/pipeline` dokumentiert ist.
-
-## 6. Optional: Frontend-Build lokal prüfen
-
-```bash
-cd ~/Development/tmba/frontend
-npm ci
-npm run build
-```
-
-Falls dein Frontend-Verzeichnis anders heißt, verwende den bereits in deinem
-GitHub-Workflow genutzten Pfad.
-
-## 7. Commit und Push
+## 3. Hotfix testen
 
 ```bash
 cd ~/Development/tmba
 
+./scripts/check-alsa-parser-hotfix.sh
+```
+
+Erwartete Abschlussmeldung:
+
+```text
+TMBA v0.6.2-A1 erfolgreich geprüft.
+```
+
+## 4. Commit und Push
+
+Wenn alle Tests grün sind:
+
+```bash
 git add .
-git commit -m "Finalize AudioPipeline v0.6.1 release"
+git commit -m "Fix ALSA device list parser"
 git push
 ```
 
-Danach müssen die GitHub-Actions-Workflows wieder grün sein.
+Der ursprüngliche Commit für v0.6.2-A kann zusammen mit diesem Hotfix bestehen
+bleiben. Ein Zurücksetzen ist nicht notwendig.
