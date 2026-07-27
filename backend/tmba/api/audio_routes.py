@@ -16,6 +16,9 @@ class AudioSourceRequest(BaseModel):
 class AudioVolumeRequest(BaseModel):
     volume: int = Field(ge=0, le=100)
 
+class AudioMuteRequest(BaseModel):
+    muted: bool
+
 class EngineSourceRequest(BaseModel):
     source: str = Field(min_length=1, max_length=32)
     force: bool = False
@@ -80,6 +83,14 @@ def next_audio():
 def set_audio_volume(request: AudioVolumeRequest):
     return _transport_response(audio_manager.set_volume(request.volume))
 
+@router.post("/mute")
+def set_audio_mute(request: AudioMuteRequest):
+    return _transport_response(audio_manager.set_muted(request.muted))
+
+@router.post("/mute/toggle")
+def toggle_audio_mute():
+    return _transport_response(audio_manager.toggle_muted())
+
 @router.post("/sync")
 def synchronize_audio():
     return _transport_response(audio_manager.synchronize())
@@ -95,10 +106,19 @@ def test_audio_output(request: TestToneRequest):
             detail="Die AudioPipeline läuft bereits. Wiedergabe zuerst stoppen.",
         )
     try:
+        audio_status = audio_manager.get_status()
+        volume_control = audio_status.get("volume_control") or {}
+        hardware_master = volume_control.get("driver") == "alsa"
         return play_test_tone(
             frequency_hz=request.frequency_hz,
             duration_seconds=request.duration_seconds,
             amplitude=request.amplitude,
+            # The HiFiBerry mixer already applies the master gain. Avoid
+            # attenuating the generated PCM a second time.
+            volume=100 if hardware_master else int(audio_status["volume"]),
+            muted=False if hardware_master else bool(
+                audio_status.get("muted", False)
+            ),
         ).to_dict()
     except Exception as error:
         raise HTTPException(

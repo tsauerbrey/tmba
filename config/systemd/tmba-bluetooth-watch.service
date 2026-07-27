@@ -1,0 +1,15 @@
+[Unit]
+Description=TMBA Bluetooth Connection Watcher
+After=bluetooth.service tmba-backend.service
+Wants=bluetooth.service
+Requires=tmba-backend.service
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/bin/tmba-bluetooth-watch.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=TMBA boot diagnostics and hardware inventory
+After=local-fs.target systemd-modules-load.service
+Before=tmba-backend.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/lib/tmba/tmba-boot-diagnostics
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

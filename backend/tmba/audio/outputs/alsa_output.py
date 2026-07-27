@@ -82,11 +82,15 @@ class AlsaOutputDriver(OutputDriver):
 
     driver_name = "alsa"
 
+    # ``aplay -l`` localises the labels. Debian with a German locale uses
+    # "Karte" and "Gerät" instead of "card" and "device". Accept both
+    # variants so hardware detection does not depend on the system locale.
     _CARD_PREFIX = re.compile(
-        r"^card\s+(?P<card_index>\d+):\s*"
+        r"^(?:card|Karte)\s+(?P<card_index>\d+):\s*"
         r"(?P<card_id>[^\s]+)\s+\[(?P<card_name>[^\]]+)\],\s*"
-        r"device\s+(?P<device_index>\d+):\s*"
-        r"(?P<device_section>.+)$"
+        r"(?:device|Gerät)\s+(?P<device_index>\d+):\s*"
+        r"(?P<device_section>.+)$",
+        re.IGNORECASE,
     )
 
     _TRAILING_BRACKETS = re.compile(

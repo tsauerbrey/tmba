@@ -8,6 +8,7 @@ from tmba.audio.outputs.base import OutputDriver
 from tmba.audio.outputs.factory import create_output_driver
 from tmba.audio.pipeline_config import PipelineConfig
 from tmba.audio.pipeline_stage import PipelineStage
+from tmba.audio.volume import SoftwareVolume, VolumeController
 from tmba.audio.stages import (
     EqualizerStage,
     LimiterStage,
@@ -50,6 +51,7 @@ class AudioPipeline:
         config: PipelineConfig | None = None,
         output_driver: OutputDriver | None = None,
         stages: Iterable[PipelineStage] | None = None,
+        volume_control: VolumeController | None = None,
     ) -> None:
         self.config = config or PipelineConfig()
         self.output_driver = (
@@ -63,6 +65,7 @@ class AudioPipeline:
             else self._default_stages()
         )
         self._state = PipelineState.CREATED
+        self._volume_control = volume_control or SoftwareVolume()
         self._assign_order()
         self.validate()
 
@@ -129,7 +132,32 @@ class AudioPipeline:
         """Forward raw PCM data to the configured output driver."""
         if self._state is not PipelineState.RUNNING:
             raise RuntimeError("AudioPipeline wurde noch nicht gestartet.")
-        return self.output_driver.write(pcm_data)
+        # The HiFiBerry master-volume controller changes the ALSA mixer and
+        # therefore leaves PCM data untouched. The software fallback can
+        # currently scale S16_LE only. For other formats it must transparently
+        # pass the stream through instead of breaking the PCM pipeline.
+        if (
+            isinstance(self._volume_control, SoftwareVolume)
+            and self.config.output.format == "S16_LE"
+        ):
+            output_data = self._volume_control.apply_s16le(pcm_data)
+        else:
+            output_data = pcm_data
+
+        return self.output_driver.write(output_data)
+
+
+    def set_volume(self, volume: int) -> dict[str, object]:
+        return self._volume_control.set_volume(volume).to_dict()
+
+    def set_muted(self, muted: bool) -> dict[str, object]:
+        return self._volume_control.set_muted(muted).to_dict()
+
+    def toggle_muted(self) -> dict[str, object]:
+        return self._volume_control.toggle_muted().to_dict()
+
+    def volume_status(self) -> dict[str, object]:
+        return self._volume_control.status().to_dict()
 
     def stop(self) -> None:
         self.output_driver.stop()
@@ -179,5 +207,8 @@ class AudioPipeline:
             ),
             output=output_status,
             stages=stage_statuses,
-            config=self.config.to_dict(),
+            config={
+                **self.config.to_dict(),
+                "volume": self.volume_status(),
+            },
         )

@@ -1,0 +1,30 @@
+[Unit]
+Description=TMBA Backend API
+Documentation=file:/opt/tmba/docs/releases/v0.9.0.md
+After=network-online.target sound.target tmba-boot-diagnostics.service
+Wants=network-online.target
+Requires=tmba-boot-diagnostics.service
+
+[Service]
+Type=simple
+User=tmba
+Group=tmba
+WorkingDirectory=/opt/tmba/backend
+EnvironmentFile=-/etc/default/tmba-backend
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONPATH=/opt/tmba/backend
+ExecStartPre=/opt/tmba/backend/.venv/bin/python -c "from tmba.core.config import get_settings; get_settings()"
+ExecStart=/opt/tmba/backend/.venv/bin/python -m uvicorn tmba.main:app --host ${TMBA_BACKEND_HOST} --port ${TMBA_BACKEND_PORT}
+Restart=on-failure
+RestartSec=3
+TimeoutStartSec=45
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/var/log/tmba /opt/tmba/backend/data
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
