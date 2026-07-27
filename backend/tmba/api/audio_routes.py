@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 from tmba.audio.engine import audio_engine
 from tmba.audio.manager import audio_manager
+from tmba.audio.test_tone import play_test_tone
 
 router = APIRouter(prefix="/audio", tags=["Audio"])
 
@@ -18,6 +19,11 @@ class AudioVolumeRequest(BaseModel):
 class EngineSourceRequest(BaseModel):
     source: str = Field(min_length=1, max_length=32)
     force: bool = False
+
+class TestToneRequest(BaseModel):
+    frequency_hz: float = Field(default=440.0, ge=20.0, le=20000.0)
+    duration_seconds: float = Field(default=3.0, ge=0.1, le=10.0)
+    amplitude: float = Field(default=0.20, ge=0.01, le=0.50)
 
 @router.get("/status")
 def get_audio_status():
@@ -77,6 +83,28 @@ def set_audio_volume(request: AudioVolumeRequest):
 @router.post("/sync")
 def synchronize_audio():
     return _transport_response(audio_manager.synchronize())
+
+@router.post("/testtone")
+def test_audio_output(request: TestToneRequest):
+    """Play a short, deliberately limited hardware test tone."""
+    pipeline = audio_manager.get_pipeline_status()
+    pipeline_state = pipeline.get("state")
+    if getattr(pipeline_state, "value", pipeline_state) == "running":
+        raise HTTPException(
+            status_code=409,
+            detail="Die AudioPipeline läuft bereits. Wiedergabe zuerst stoppen.",
+        )
+    try:
+        return play_test_tone(
+            frequency_hz=request.frequency_hz,
+            duration_seconds=request.duration_seconds,
+            amplitude=request.amplitude,
+        ).to_dict()
+    except Exception as error:
+        raise HTTPException(
+            status_code=503,
+            detail={"success": False, "error": str(error)},
+        ) from error
 
 def _transport_response(result: dict):
     if not result.get("success", False):

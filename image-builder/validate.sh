@@ -73,7 +73,7 @@ for script in \
   bash -n "$script"
 done
 
-grep -q '^dtoverlay=hifiberry-dacplus$' "$ROOT_DIR/pi-gen-stage/03-tmba-hardware/00-run.sh" || fail "HiFiBerry-Overlay fehlt"
+grep -q '^dtoverlay=hifiberry-amp4pro$' "$ROOT_DIR/pi-gen-stage/03-tmba-hardware/00-run.sh" || fail "HiFiBerry-Overlay fehlt"
 grep -q '\${STAGE_DIR}/03-tmba-hardware/99-tmba-audio.conf' "$ROOT_DIR/pi-gen-stage/03-tmba-hardware/00-run.sh" || fail "Hardware-Asset wird nicht über STAGE_DIR adressiert"
 grep -q '/opt/tmba/config' "$ROOT_DIR/pi-gen-stage/02-tmba-install/00-run-chroot.sh" || fail "Runtime-Konfiguration wird nicht installiert"
 grep -q 'copy_previous' "$ROOT_DIR/pi-gen-stage/prerun.sh" || fail "Custom Stage übernimmt das Root-Dateisystem der vorherigen Stage nicht"

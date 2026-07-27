@@ -230,3 +230,25 @@ def test_start_rejects_missing_aplay() -> None:
 
     with pytest.raises(AlsaOutputError, match="aplay"):
         driver.start()
+
+
+def test_named_card_device_is_resolved_without_fixed_index() -> None:
+    driver, _, commands = create_driver(
+        device="hw:CARD=sndrpihifiberry,DEV=0"
+    )
+
+    driver.start()
+
+    assert commands[0][3] == "hw:CARD=sndrpihifiberry,DEV=0"
+    selected = driver.status().details["selected_device"]
+    assert selected["card_index"] == 1
+    assert selected["card_id"] == "sndrpihifiberry"
+
+
+def test_named_card_device_rejects_missing_card() -> None:
+    driver, _, _ = create_driver(
+        device="hw:CARD=missing,DEV=0"
+    )
+
+    with pytest.raises(AlsaOutputError, match="nicht gefunden"):
+        driver.start()

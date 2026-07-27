@@ -5,6 +5,19 @@ Alle wichtigen Änderungen an TMBA-OS werden in dieser Datei dokumentiert.
 Das Format orientiert sich an „Keep a Changelog“. Die Versionsnummern folgen
 dem Schema der semantischen Versionierung.
 
+## [0.9.0] – 2026-07-26
+
+### Added
+- Real ALSA runtime output for the HiFiBerry Amp4 Pro.
+- Stable named ALSA selection through `hw:CARD=sndrpihifiberry,DEV=0`.
+- Dynamic reporting of the actual ALSA card index and selected device.
+- Safe `POST /audio/testtone` endpoint for hardware validation.
+
+### Changed
+- Raspberry Pi image now uses `dtoverlay=hifiberry-amp4pro`.
+- Runtime PCM format changed to stereo 48 kHz `S16_LE` for the first hardware path.
+- AudioManager now creates its pipeline from `config/audio.yaml`.
+
 ## [Unreleased]
 
 ### Geplant

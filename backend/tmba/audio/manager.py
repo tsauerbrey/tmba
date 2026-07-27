@@ -8,6 +8,7 @@ from time import monotonic
 from typing import Any, Protocol
 
 from tmba.audio.pipeline import AudioPipeline
+from tmba.audio.pipeline_config import PipelineConfig
 from tmba.core.event_bus import event_bus
 from tmba.core.source_manager import source_manager
 
@@ -688,7 +689,9 @@ class AudioManager:
         return max(0, min(100, numeric))
 
 
-audio_manager = AudioManager()
+audio_manager = AudioManager(
+    pipeline=AudioPipeline(config=PipelineConfig.from_settings())
+)
 
 
 def register_default_sources() -> None:
