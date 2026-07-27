@@ -11,6 +11,7 @@ from tmba.api.routes import router
 from tmba.api.system_routes import router as system_router
 from tmba.audio.manager import register_default_sources
 from tmba.core.config import get_settings
+from tmba.services.shairport_metadata import shairport_metadata_observer
 
 settings = get_settings()
 STATIC_DIRECTORY = Path(__file__).resolve().parent / "static"
@@ -54,3 +55,13 @@ def root():
         "audio_engine": "/audio/engine",
         "docs": "/docs",
     }
+
+@app.on_event("startup")
+def start_shairport_metadata_observer() -> None:
+    shairport_metadata_observer.start()
+
+
+@app.on_event("shutdown")
+def stop_shairport_metadata_observer() -> None:
+    shairport_metadata_observer.stop()
+

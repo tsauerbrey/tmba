@@ -73,8 +73,8 @@ class BluetoothService(BaseSourceService):
 
         if not status.get("available", False):
             return {
-                "success": False,
-                "error": "Es ist kein Bluetooth-Gerät verbunden.",
+                "success": True,
+                "message": "Bluetooth ist bereits getrennt und gilt als gestoppt.",
                 "bluetooth": status,
             }
 

@@ -5,10 +5,10 @@ if [ ! -f "$CONFIG_TXT" ]; then
 fi
 
 sed -i '/^[[:space:]]*dtparam=audio=on[[:space:]]*$/d' "$CONFIG_TXT"
-grep -q '^dtoverlay=hifiberry-dacplus$' "$CONFIG_TXT" || cat >> "$CONFIG_TXT" <<'EOT'
+grep -q '^dtoverlay=hifiberry-amp4pro$' "$CONFIG_TXT" || cat >> "$CONFIG_TXT" <<'EOT'
 
 # TMBA: HiFiBerry Amp4 Pro
-dtoverlay=hifiberry-dacplus
+dtoverlay=hifiberry-amp4pro
 EOT
 
 install -Dm644 \

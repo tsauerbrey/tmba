@@ -105,7 +105,7 @@ def test_transport_is_routed_to_active_source():
     assert manager.get_status()["state"] == "playing"
 
 
-def test_volume_is_normalized_and_forwarded():
+def test_volume_is_normalized_and_applied_to_master():
     manager, webradio, _bluetooth = create_manager()
 
     manager.select_source("webradio")
@@ -113,7 +113,8 @@ def test_volume_is_normalized_and_forwarded():
 
     assert result["success"] is True
     assert result["volume"] == 100
-    assert webradio.volume == 100
+    assert webradio.volume == 50
+    assert "set_volume" not in webradio.commands
     assert manager.get_status()["volume"] == 100
 
 

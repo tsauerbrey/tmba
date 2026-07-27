@@ -86,5 +86,23 @@ class PipelineConfig:
     limiter: LimiterConfig = field(default_factory=LimiterConfig)
     output: OutputConfig = field(default_factory=OutputConfig)
 
+
+    @classmethod
+    def from_settings(cls) -> "PipelineConfig":
+        """Build the runtime pipeline from the repository audio.yaml file."""
+        from tmba.core.config import get_settings
+
+        settings = get_settings().audio
+        hardware = settings.hardware
+        return cls(
+            output=OutputConfig(
+                driver="alsa",
+                device=str(hardware.alsa_device),
+                sample_rate=int(hardware.sample_rate),
+                channels=int(hardware.channels),
+                format=str(hardware.sample_format),
+            )
+        )
+
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

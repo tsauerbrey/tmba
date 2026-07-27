@@ -8,6 +8,9 @@ from time import monotonic
 from typing import Any, Protocol
 
 from tmba.audio.pipeline import AudioPipeline
+from tmba.audio.pipeline_config import PipelineConfig
+from tmba.audio.volume import AlsaMixerVolume
+from tmba.core.config import get_settings
 from tmba.core.event_bus import event_bus
 from tmba.core.source_manager import source_manager
 
@@ -47,6 +50,18 @@ class AudioPipelineService(Protocol):
         ...
 
     def status(self) -> Any:
+        ...
+
+    def set_volume(self, volume: int) -> dict[str, Any]:
+        ...
+
+    def set_muted(self, muted: bool) -> dict[str, Any]:
+        ...
+
+    def toggle_muted(self) -> dict[str, Any]:
+        ...
+
+    def volume_status(self) -> dict[str, Any]:
         ...
 
 
@@ -91,11 +106,14 @@ class AudioManager:
         self,
         *,
         pipeline: AudioPipelineService | None = None,
+        initial_volume: int = 50,
     ) -> None:
         self._lock = RLock()
-        self._state = AudioManagerState()
+        self._state = AudioManagerState(volume=self._normalize_volume(initial_volume))
         self._services: dict[str, AudioSourceService] = {}
         self._pipeline = pipeline or AudioPipeline()
+        if hasattr(self._pipeline, "set_volume"):
+            self._pipeline.set_volume(self._state.volume)
 
         event_bus.subscribe(
             "source.availability_changed",
@@ -151,6 +169,14 @@ class AudioManager:
                     source_status = {
                         "error": str(error),
                     }
+
+        volume_status = None
+        if hasattr(self._pipeline, "volume_status"):
+            volume_status = self._pipeline.volume_status()
+            snapshot["volume"] = int(volume_status.get("volume", snapshot["volume"]))
+            snapshot["muted"] = bool(volume_status.get("muted", False))
+            snapshot["gain_db"] = volume_status.get("gain_db")
+            snapshot["volume_control"] = dict(volume_status)
 
         snapshot.update(
             {
@@ -214,6 +240,8 @@ class AudioManager:
 
         if previous != "none":
             stop_result = self._stop_source(previous)
+
+            print(f"DEBUG stop_result={stop_result!r}", flush=True)
 
             if not stop_result.get("success", False):
                 return self._fail_transition(
@@ -348,45 +376,56 @@ class AudioManager:
         )
 
     def set_volume(self, volume: int) -> dict[str, Any]:
+        """Set the one shared TMBA master volume.
+
+        Source services no longer receive a second volume command. AirPlay,
+        Bluetooth and Webradio all use the same HiFiBerry master mixer.
+        """
         normalized = self._normalize_volume(volume)
+        status = self._pipeline.set_volume(normalized)
+        actual = int(status.get("volume", normalized))
 
         with self._lock:
             source = self._state.source
-            self._state.volume = normalized
-
-        service_result: dict[str, Any] | None = None
-
-        if source != "none":
-            service = self._get_service(source)
-
-            if service is not None and hasattr(service, "set_volume"):
-                try:
-                    service_result = service.set_volume(normalized)
-                except Exception as error:
-                    return self._set_error(
-                        f"Lautstärke konnte nicht gesetzt werden: {error}",
-                        command="set_volume",
-                    )
-
-                if not service_result.get("success", False):
-                    return self._set_error_from_result(
-                        "set_volume",
-                        service_result,
-                    )
+            self._state.volume = actual
 
         event_bus.publish(
             "audio.volume_changed",
             {
                 "source": source,
-                "volume": normalized,
+                "volume": actual,
+                "volume_control": status,
             },
         )
-
         return self._result(
             success=True,
             command="set_volume",
-            volume=normalized,
-            service_result=service_result,
+            volume=actual,
+            volume_control=status,
+        )
+
+    def set_muted(self, muted: bool) -> dict[str, Any]:
+        if not hasattr(self._pipeline, "set_muted"):
+            return self._set_error("AudioPipeline unterstützt Mute nicht.")
+        status = self._pipeline.set_muted(muted)
+        event_bus.publish("audio.mute_changed", status)
+        return self._result(
+            success=True,
+            command="set_muted",
+            muted=bool(status["muted"]),
+            volume_control=status,
+        )
+
+    def toggle_muted(self) -> dict[str, Any]:
+        if not hasattr(self._pipeline, "toggle_muted"):
+            return self._set_error("AudioPipeline unterstützt Mute nicht.")
+        status = self._pipeline.toggle_muted()
+        event_bus.publish("audio.mute_changed", status)
+        return self._result(
+            success=True,
+            command="toggle_muted",
+            muted=bool(status["muted"]),
+            volume_control=status,
         )
 
     def synchronize(self) -> dict[str, Any]:
@@ -549,6 +588,7 @@ class AudioManager:
         self,
         data: dict[str, Any],
     ) -> None:
+
         source = str(data.get("source", "")).strip().lower()
         available = data.get("available")
 
@@ -562,7 +602,9 @@ class AudioManager:
         with self._lock:
             active_source = self._state.source
 
-        if not available and active_source == source:
+        if available:
+            self.select_source(source)
+        elif active_source == source:
             self.select_source("none")
 
     def _fail_transition(
@@ -688,7 +730,23 @@ class AudioManager:
         return max(0, min(100, numeric))
 
 
-audio_manager = AudioManager()
+_audio_settings = get_settings().audio
+_volume_settings = _audio_settings.volume
+_master_volume = AlsaMixerVolume(
+    card="sndrpihifiberry",
+    control="Digital",
+    minimum=int(_volume_settings.minimum),
+    maximum=100,
+)
+_master_volume_status = _master_volume.status()
+_audio_pipeline = AudioPipeline(
+    config=PipelineConfig.from_settings(),
+    volume_control=_master_volume,
+)
+audio_manager = AudioManager(
+    pipeline=_audio_pipeline,
+    initial_volume=int(_master_volume_status.volume),
+)
 
 
 def register_default_sources() -> None:

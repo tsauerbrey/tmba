@@ -82,11 +82,15 @@ class AlsaOutputDriver(OutputDriver):
 
     driver_name = "alsa"
 
+    # ``aplay -l`` localises the labels. Debian with a German locale uses
+    # "Karte" and "Gerät" instead of "card" and "device". Accept both
+    # variants so hardware detection does not depend on the system locale.
     _CARD_PREFIX = re.compile(
-        r"^card\s+(?P<card_index>\d+):\s*"
+        r"^(?:card|Karte)\s+(?P<card_index>\d+):\s*"
         r"(?P<card_id>[^\s]+)\s+\[(?P<card_name>[^\]]+)\],\s*"
-        r"device\s+(?P<device_index>\d+):\s*"
-        r"(?P<device_section>.+)$"
+        r"(?:device|Gerät)\s+(?P<device_index>\d+):\s*"
+        r"(?P<device_section>.+)$",
+        re.IGNORECASE,
     )
 
     _TRAILING_BRACKETS = re.compile(
@@ -121,6 +125,7 @@ class AlsaOutputDriver(OutputDriver):
         self._aplay_path: str | None = None
         self._process: PlaybackProcess | None = None
         self._bytes_written = 0
+        self._selected_device: AlsaDevice | None = None
         self._lock = RLock()
 
     @staticmethod
@@ -227,7 +232,7 @@ class AlsaOutputDriver(OutputDriver):
 
             try:
                 devices = self.discover_devices()
-                self._validate_configured_device(devices)
+                self._selected_device = self._resolve_configured_device(devices)
                 command = self.build_playback_command()
                 process = self._process_factory(command)
 
@@ -331,6 +336,11 @@ class AlsaOutputDriver(OutputDriver):
                     "platform": self._platform_name,
                     "aplay_path": self._aplay_path,
                     "device_count": len(self._devices),
+                    "selected_device": (
+                        self._selected_device.to_dict()
+                        if self._selected_device is not None
+                        else None
+                    ),
                     "devices": [
                         device.to_dict()
                         for device in self._devices
@@ -357,27 +367,42 @@ class AlsaOutputDriver(OutputDriver):
                 "ALSA-Ausgabe ist nur auf Linux verfügbar."
             )
 
-    def _validate_configured_device(
+    def _resolve_configured_device(
         self,
         devices: tuple[AlsaDevice, ...],
-    ) -> None:
+    ) -> AlsaDevice | None:
         configured = self._config.device.strip()
 
         if configured in {"", "default"}:
-            return
+            return None
 
-        if configured.startswith(("plughw:", "sysdefault:", "dmix:")):
-            return
-
-        available = {
-            device.hardware_address
-            for device in devices
-        }
-        if configured.startswith("hw:") and configured not in available:
+        named = re.match(
+            r"^(?:plug)?hw:CARD=(?P<card>[^,]+),DEV=(?P<device>\d+)$",
+            configured,
+            re.IGNORECASE,
+        )
+        if named is not None:
+            card_id = named.group("card")
+            device_index = int(named.group("device"))
+            for device in devices:
+                if device.card_id == card_id and device.device_index == device_index:
+                    return device
             raise AlsaOutputError(
-                f"Das konfigurierte ALSA-Gerät '{configured}' "
-                "wurde nicht gefunden."
+                f"Das konfigurierte ALSA-Gerät '{configured}' wurde nicht gefunden."
             )
+
+        if configured.startswith(("sysdefault:", "dmix:")):
+            return None
+
+        for device in devices:
+            if configured in {device.hardware_address, f"plughw:{device.card_index},{device.device_index}"}:
+                return device
+
+        if configured.startswith(("hw:", "plughw:")):
+            raise AlsaOutputError(
+                f"Das konfigurierte ALSA-Gerät '{configured}' wurde nicht gefunden."
+            )
+        return None
 
     def _set_runtime_error(self, message: str) -> None:
         self._state = OutputState.ERROR
