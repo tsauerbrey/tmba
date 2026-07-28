@@ -27,9 +27,10 @@ def test_builder_validation_succeeds() -> None:
 def test_dry_run_creates_complete_plan() -> None:
     result = run(str(BUILDER / "build.sh"), "--dry-run")
     assert result.returncode == 0, result.stderr
-    plan = BUILDER / "dist/tmba-developer-0.9.0-build-plan.txt"
+    version = (ROOT / "VERSION").read_text().strip()
+    plan = BUILDER / f"dist/tmba-developer-{version}-build-plan.txt"
     text = plan.read_text()
-    assert "version=0.9.0" in text
+    assert f"version={version}" in text
     assert "pi_gen_ref=2026-06-18-raspios-bookworm-arm64" in text
     assert "docker_platform=linux/arm64" in text
     assert "pi_gen_commit=" in text
@@ -155,16 +156,15 @@ def test_runtime_check_uses_runuser_without_sudo() -> None:
     assert "sudo -u tmba" not in install
 
 
-def test_all_release_versions_are_v090() -> None:
+def test_all_release_versions_match_repository_version() -> None:
     version = (ROOT / "VERSION").read_text().strip()
     image_env = (BUILDER / "config/image.env").read_text()
     system = (ROOT / "config/system.yaml").read_text()
     finalize = (BUILDER / "pi-gen-stage/05-tmba-finalize/00-run-chroot.sh").read_text()
-    assert version == "0.9.0"
-    assert "TMBA_IMAGE_VERSION=0.9.0" in image_env
-    assert "version: 0.9.0" in system
-    assert "TMBA_IMAGE_VERSION=0.9.0" in finalize
-    assert "TMBA-OS 0.9.0" in finalize
+    assert f"TMBA_IMAGE_VERSION={version}" in image_env
+    assert f"version: {version}" in system
+    assert f"TMBA_IMAGE_VERSION={version}" in finalize
+    assert f"TMBA-OS {version}" in finalize
 
 
 def test_pigen_loop_patch_replaces_stale_partition_nodes() -> None:
