@@ -76,3 +76,11 @@ artifacts/
 *.bak
 *.bak-*
 *.orig
+
+# TMBA image-builder runtime
+image-builder/cache/
+image-builder/dist/
+frontend/node_modules/
+frontend/dist/
+image-builder/cache/
+
